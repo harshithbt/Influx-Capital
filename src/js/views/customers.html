@@ -1,0 +1,114 @@
+<!--
+ Copyright (c) 2014, 2022, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div class="oj-hybrid-padding">
+  <h1 class="oj-typography-subheading-sm">Customers</h1>
+  <oj-bind-if test="[[userRole() === 'superadmin' || userRole() === 'admin' || userRole() === 'user']]">
+    <div>
+      <div class="oj-flex oj-sm-margin-4x-bottom">
+        <div class="oj-flex-item">
+          <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Filter" label-edge="inside"
+            placeholder="Type to filter" on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}"
+            clear-icon="always"></oj-input-text>
+        </div>
+        <oj-bind-if test="[[userRole() === 'superadmin' || userRole() === 'admin']]">
+          <div class="oj-flex-item">
+            <div class="oj-flex oj-sm-justify-content-flex-end">
+              <oj-button display="icons" chroming="callToAction" on-oj-action="[[addNewCustomer]]">
+                <span slot="startIcon" class="oj-ux-ico-add-row"></span>
+                Add New Customer
+              </oj-button>
+            </div>
+          </div>
+        </oj-bind-if>
+      </div>
+      <div class="oj-flex">
+        <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" display="grid"
+          style="max-height: 500px;" data="[[dataprovider]]" scroll-policy="loadMoreOnScroll"
+          columns-default.sortable="enabled" scroll-policy-options='{"fetchSize": 10}'
+          columns-default.resizable="enabled" columns="{{columnArray}}" class="demo-table-container">
+          <template slot="cellTemplate" data-oj-as="cell">
+            <oj-bind-text value="[[cell.data]]"></oj-bind-text>
+          </template>
+          <template slot="mobileCellTemplate" data-oj-as="cell">
+            <oj-bind-text value="[[cell.data]]"></oj-bind-text>
+            <oj-bind-text value="Harshith"></oj-bind-text>
+          </template>
+          <template slot="editCellTemplate" data-oj-as="cell">
+            <oj-bind-if test="[[userRole() === 'superadmin' || userRole() === 'admin']]">
+              <oj-button display="icons" chroming="borderless" on-oj-action="[[editCustomer]]">
+                <span slot="startIcon" class="oj-ux-ico-edit"></span>
+                Edit
+              </oj-button>
+            </oj-bind-if>
+            <oj-button display="icons" chroming="borderless" on-oj-action="[[callCustomer]]">
+              <span slot="startIcon" class="oj-ux-ico-call"></span>
+              Call
+            </oj-button>
+          </template>
+        </oj-table>
+      </div>
+
+    </div>
+
+  </oj-bind-if>
+  <oj-bind-if test="[[userRole() === 'new']]">
+    <div>
+      <oj-bind-text value="You do not have access to view/edit Customer, please contact admin for the access.">
+      </oj-bind-text>
+    </div>
+  </oj-bind-if>
+</div>
+
+<div id="dialogWrapper">
+
+  <oj-dialog id="addNewCustomer" dialog-title="Add New Customer" aria-describedby="desc">
+    <div slot="body">
+      <div class="oj-sm-padding-2x-top" id="addnew-form-container">
+        <oj-validation-group id="trackerAdd" role="group">
+          <oj-form-layout direction="row" max-columns="1">
+            <oj-input-text label-hint="GUARATOR/PROP.NAME" value="{{GUARATOR_NAME}}" required></oj-input-text>
+            <oj-input-text label-hint="FIRM NAME" value="{{FIRM_NAME}}" required></oj-input-text>
+            <oj-combobox-one label-hint="CONSTITUTION" value="{{CONSTITUTION}}" options="[[dataProviderCONSTITUTION]]">
+            </oj-combobox-one>
+            <oj-combobox-one label-hint="INDUSTRY TYPE" value="{{INDUSTRY_TYPE}}"
+              options="[[dataProviderINDUSTRY_TYPE]]">
+            </oj-combobox-one>
+            <oj-input-text label-hint="MOBILE NUMBER" value="{{MOBILE_NUMBER}}" required></oj-input-text>
+            <oj-text-area label-hint="COMMENTS" value="{{COMMENTS}}"></oj-text-area>
+          </oj-form-layout>
+        </oj-validation-group>
+      </div>
+    </div>
+    <div slot="footer">
+      <oj-button id="cancelButton" on-oj-action="[[addNewCustomerCancel]]">Cancel</oj-button>
+      <oj-button id="addButton" chroming="callToAction" on-oj-action="[[addNewCustomerAC]]">Add</oj-button>
+    </div>
+  </oj-dialog>
+
+  <oj-dialog id="editCustomer" dialog-title="Edit Customer" aria-describedby="desc">
+    <div slot="body">
+      <div class="oj-sm-padding-2x-top" id="addnew-form-container">
+        <oj-validation-group id="trackerEdit" role="group">
+          <oj-form-layout direction="row" max-columns="1">
+            <oj-input-text label-hint="GUARATOR/PROP.NAME" value="{{GUARATOR_NAME}}" required></oj-input-text>
+            <oj-input-text label-hint="FIRM NAME" value="{{FIRM_NAME}}" required></oj-input-text>
+            <oj-combobox-one label-hint="CONSTITUTION" value="{{CONSTITUTION}}" options="[[dataProviderCONSTITUTION]]">
+            </oj-combobox-one>
+            <oj-combobox-one label-hint="INDUSTRY TYPE" value="{{INDUSTRY_TYPE}}"
+              options="[[dataProviderINDUSTRY_TYPE]]">
+            </oj-combobox-one>
+            <oj-input-text label-hint="MOBILE NUMBER" value="{{MOBILE_NUMBER}}" required></oj-input-text>
+            <oj-text-area label-hint="COMMENTS" value="{{COMMENTS}}"></oj-text-area>
+          </oj-form-layout>
+        </oj-validation-group>
+      </div>
+    </div>
+    <div slot="footer">
+      <oj-button id="cancelButton" on-oj-action="[[editCustomerCancel]]">Cancel</oj-button>
+      <oj-button id="editButton" chroming="callToAction" on-oj-action="[[editCustomerAC]]">Edit</oj-button>
+    </div>
+  </oj-dialog>
+</div>

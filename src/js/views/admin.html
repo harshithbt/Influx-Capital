@@ -1,0 +1,61 @@
+<!--
+ Copyright (c) 2014, 2022, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div class="oj-hybrid-padding">
+    <h1 class="oj-typography-subheading-sm">Admin</h1>
+    <div>
+        <div class="oj-flex oj-sm-margin-4x-bottom">
+            <div class="oj-flex-item">
+                <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Filter" label-edge="inside"
+                    placeholder="Type to filter" on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}"
+                    clear-icon="always"></oj-input-text>
+            </div>
+        </div>
+        <div class="oj-flex">
+            <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" display="grid"
+                style="max-height: 500px;" data="[[dataprovider]]" scroll-policy="loadMoreOnScroll"
+                columns-default.sortable="enabled" scroll-policy-options='{"fetchSize": 10}'
+                columns-default.resizable="enabled" columns="{{columnArray}}" class="demo-table-container">
+                <template slot="cellTemplate" data-oj-as="cell">
+                    <oj-bind-text value="[[cell.data]]"></oj-bind-text>
+                </template>
+                <template slot="proTemplate" data-oj-as="cell">
+                    <oj-avatar role="img" initials="[[userInitial(cell)]]" shape="circle" size="[[smScreen() ? 'sm' : 'sm']]"
+                        src="[[photoUrl(cell)]]"></oj-avatar>
+                </template>
+                <template slot="editCellTemplate" data-oj-as="cell">
+                    <oj-button display="icons" chroming="borderless" on-oj-action="[[editUser]]">
+                        <span slot="startIcon" class="oj-ux-ico-edit"></span>
+                        Edit
+                    </oj-button>
+                </template>
+            </oj-table>
+        </div>
+
+    </div>
+</div>
+
+<div id="dialogWrapper">
+
+    <oj-dialog id="editUser" dialog-title="Edit User" aria-describedby="desc">
+        <div slot="body">
+            <div class="oj-sm-padding-2x-top" id="edituser-form-container">
+                <oj-validation-group id="trackerEdit" role="group">
+                    <oj-form-layout direction="row" max-columns="1">
+                        <oj-input-text label-hint="Email" value="{{email}}" disabled>
+                        </oj-input-text>
+                        <oj-input-text label-hint="Phone Number" value="{{phone}}"></oj-input-text>
+                        <oj-select-single data="[[dataProviderRole]]" value="{{role}}" label-hint="User Role" required>
+                        </oj-select-single>
+                    </oj-form-layout>
+                </oj-validation-group>
+            </div>
+        </div>
+        <div slot="footer">
+            <oj-button id="cancelButton" on-oj-action="[[editUserCancel]]">Cancel</oj-button>
+            <oj-button id="editButton" chroming="callToAction" on-oj-action="[[editUserAC]]">Edit</oj-button>
+        </div>
+    </oj-dialog>
+</div>
