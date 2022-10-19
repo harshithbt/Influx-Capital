@@ -47,6 +47,12 @@
               <span slot="startIcon" class="oj-ux-ico-call"></span>
               Call
             </oj-button>
+            <oj-bind-if test="[[userRole() === 'superadmin']]">
+              <oj-button display="icons" chroming="borderless" on-oj-action="[[deleteCustPop]]">
+                <span slot="startIcon" class="oj-ux-ico-delete-all"></span>
+                Delete
+              </oj-button>
+            </oj-bind-if>
           </template>
         </oj-table>
       </div>
@@ -109,6 +115,17 @@
     <div slot="footer">
       <oj-button id="cancelButton" on-oj-action="[[editCustomerCancel]]">Cancel</oj-button>
       <oj-button id="editButton" chroming="callToAction" on-oj-action="[[editCustomerAC]]">Edit</oj-button>
+    </div>
+  </oj-dialog>
+
+  <oj-dialog id="deleteCustomer" dialog-title="Confirmation" aria-describedby="desc" cancel-behavior="icon">
+    <div slot="body">
+      <div class="oj-sm-padding-2x-top" id="edituser-form-container">
+        <oj-bind-text value="Are you sure want to delete?"></oj-bind-text>
+      </div>
+    </div>
+    <div slot="footer">
+      <oj-button id="deleteButton" chroming="callToAction" on-oj-action="[[deleteCustomerAC]]">Delete</oj-button>
     </div>
   </oj-dialog>
 </div>

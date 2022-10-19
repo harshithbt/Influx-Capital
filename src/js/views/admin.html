@@ -22,13 +22,21 @@
                     <oj-bind-text value="[[cell.data]]"></oj-bind-text>
                 </template>
                 <template slot="proTemplate" data-oj-as="cell">
-                    <oj-avatar role="img" initials="[[userInitial(cell)]]" shape="circle" size="[[smScreen() ? 'sm' : 'sm']]"
-                        src="[[photoUrl(cell)]]"></oj-avatar>
+                    <oj-avatar role="img" initials="[[userInitial(cell)]]" shape="circle"
+                        size="[[smScreen() ? 'sm' : 'sm']]" src="[[photoUrl(cell)]]"></oj-avatar>
+                </template>
+                <template slot="loginCellTemplate" data-oj-as="cell">
+                    <oj-input-date-time value="[[cell.row.last_login]]" readonly></oj-input-date-time>
                 </template>
                 <template slot="editCellTemplate" data-oj-as="cell">
                     <oj-button display="icons" chroming="borderless" on-oj-action="[[editUser]]">
                         <span slot="startIcon" class="oj-ux-ico-edit"></span>
                         Edit
+                    </oj-button>
+                    <oj-button display="icons" chroming="borderless" on-oj-action="[[deleteUserPop]]"
+                        disabled="[[cell.row.UID === loggedUserUid()]]">
+                        <span slot="startIcon" class="oj-ux-ico-delete-all"></span>
+                        Delete
                     </oj-button>
                 </template>
             </oj-table>
@@ -56,6 +64,17 @@
         <div slot="footer">
             <oj-button id="cancelButton" on-oj-action="[[editUserCancel]]">Cancel</oj-button>
             <oj-button id="editButton" chroming="callToAction" on-oj-action="[[editUserAC]]">Edit</oj-button>
+        </div>
+    </oj-dialog>
+
+    <oj-dialog id="deleteUser" dialog-title="Confirmation" aria-describedby="desc" cancel-behavior="icon">
+        <div slot="body">
+            <div class="oj-sm-padding-2x-top" id="edituser-form-container">
+                <oj-bind-text value="Are you sure want to delete?"></oj-bind-text>
+            </div>
+        </div>
+        <div slot="footer">
+            <oj-button id="deleteButton" chroming="callToAction" on-oj-action="[[deleteUserAC]]">Delete</oj-button>
         </div>
     </oj-dialog>
 </div>

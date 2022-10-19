@@ -126,7 +126,6 @@
                     <oj-option id="admin" value="admin">Admin</oj-option>
                   </oj-bind-if>
                   <oj-option id="pref" value="pref">Preferences</oj-option>
-                  <oj-option id="help" value="help">Help</oj-option>
                   <oj-option id="about" value="about">About</oj-option>
                   <oj-option id="out" value="out">Sign Out</oj-option>
                 </oj-menu>
@@ -170,6 +169,59 @@
       </footer>
       <div id="page-loader" class="loading">
         <oj-progress-circle size="[[smScreen() ? 'sm' : 'md']]" value="-1"></oj-progress-circle>
+      </div>
+      <div class="mp-sticky-container" id="icSideIcons">
+        <ul class="mp-sticky">
+            <li class="mp-sticky-item">
+              <oj-button display="icons" chroming="borderless" on-oj-action="[[callUsAction]]" title="Call Us">
+                <span slot="startIcon" class="oj-ux-ico-call"></span>
+                Call Us
+              </oj-button>
+            </li>
+            <li class="mp-sticky-item">
+              <oj-button display="icons" chroming="borderless" on-oj-action="[[helpAction]]" title="Need help?">
+                <span slot="startIcon" class="oj-ux-ico-help-circle-s"></span>
+                Need help?
+              </oj-button>
+            </li>
+            <li class="mp-sticky-item">
+              <oj-button display="icons" chroming="borderless" on-oj-action="[[messageAction]]" title="Message">
+                <span slot="startIcon" class="oj-ux-ico-message"></span>
+                Message
+              </oj-button>
+            </li>
+        </ul>
+        <oj-dialog id="call-us-dialog" dialog-title="Call Us" class="oj-sm-4">
+          <div slot="body">
+            Dial 9845212313
+          </div>
+          <div slot="footer">
+            <oj-button id="okButton" on-oj-action="[[closeCallUs]]">OK
+            </oj-button>
+          </div>
+        </oj-dialog>
+        <oj-dialog id="help-dialog" dialog-title="Help" class="oj-sm-4">
+          <div slot="body">
+            Email us at <a href="mailto:contact@influxcapital.in">contact@influxcapital.in </a>
+            or
+            click
+            <a href="https://zinavo-clientupdates.in/suyog/Influx-capital/" target="_blank">here</a> to
+            view our page
+          </div>
+          <div slot="footer">
+            <oj-button id="okButton" on-oj-action="[[closeHelp]]">OK
+            </oj-button>
+          </div>
+        </oj-dialog>
+        <oj-dialog id="message-dialog" dialog-title="message" class="oj-sm-4">
+          <div slot="body">
+            Under development!!!
+          </div>
+          <div slot="footer">
+            <oj-button id="okButton" on-oj-action="[[closeMessage]]">OK
+            </oj-button>
+          </div>
+        </oj-dialog>
       </div>
     </div>
   </div>

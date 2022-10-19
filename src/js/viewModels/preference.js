@@ -69,24 +69,12 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
 
       this.updatePhoneNumberButton = () => {
         rvm.showLoader();
-        var ddUserRole = firebase.database().ref("users/" + this.uid());
         var database = firebase.database();
         var database_ref = database.ref();
-        ddUserRole.on("value", (snapshot) => {
-          if (snapshot.exists()) {
-            var resp = snapshot.val();
-            var user_data = {
-              email: resp.email,
-              role: resp.role,
-              phone: this.phoneNumber(),
-              proPicUrl: resp.proPicUrl,
-              last_login: resp.last_login
-            }
-            database_ref.child('users/' + this.uid()).set(user_data);
-            rvm.hideLoader();
-            rvm.messagesInfo(rvm.getMessagesData("confirmation", "Phone Number", "Updated Successfully"));
-          }
-        });
+        database_ref.child('users/' + this.uid()+'/phone').set(this.phoneNumber());
+        rvm.phoneNumber(this.phoneNumber());
+        rvm.hideLoader();
+        rvm.messagesInfo(rvm.getMessagesData("confirmation", "Phone Number", "Updated Successfully"));
       };
 
       this.updateProfilePicButton = () => {
@@ -109,8 +97,6 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
           var orginalFName = file.name;
           orginalFName = orginalFName.split('.').pop();
           var genaratedFileName = this.uid() + "." + orginalFName;
-          this.fileName(file.name);
-          var file = files[0];
           var storageRef = firebase.storage().ref('img/' + genaratedFileName);
           var task = storageRef.put(file);
           task.on('state_changed',
@@ -140,22 +126,9 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
               // For instance, get the download URL: https://firebasestorage.googleapis.com/...
               task.snapshot.ref.getDownloadURL().then((downloadURL) => {
                 rvm.userImage(downloadURL);
-                var ddUserRole = firebase.database().ref("users/" + this.uid());
                 var database = firebase.database();
                 var database_ref = database.ref();
-                ddUserRole.on("value", (snapshot) => {
-                  if (snapshot.exists()) {
-                    var resp = snapshot.val();
-                    var user_data = {
-                      email: resp.email,
-                      role: resp.role,
-                      phone: resp.phone,
-                      proPicUrl: downloadURL,
-                      last_login: resp.last_login
-                    }
-                    database_ref.child('users/' + this.uid()).set(user_data);
-                  }
-                });
+                database_ref.child('users/' + this.uid()+'/proPicUrl').set(downloadURL);
                 document.getElementById("uploadProPic").close();
                 rvm.messagesInfo(rvm.getMessagesData("confirmation", "Profile Picture", "Uploaded Successfully"));
               });
@@ -166,6 +139,9 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
 
       this.selectListener = (event) => {
         this.uploadEvent(event);
+        const files = event.detail.files;
+        var file = files[0];
+        this.fileName(file.name);
       };
 
       this.connected = () => {

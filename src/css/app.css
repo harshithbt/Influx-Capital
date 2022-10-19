@@ -112,14 +112,14 @@ html[dir="rtl"] .demo-oracle-icon {
 }
 
 .img_help {
-  background-image: url(images/6685.jpg);
+  background-image: url(images/20943659.jpg);
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
 }
 
 .img_about {
-  background-image: url(images/20943659.jpg);
+  background-image: url(images/6685.jpg);
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -132,4 +132,24 @@ html[dir="rtl"] .demo-oracle-icon {
     line-height: 2;
     display: inline-block;
     vertical-align: middle;
+}
+
+.mp-sticky-container {
+	position: fixed;
+	right: -155px;
+	top: calc(50% - 90px);
+	width: 200px;
+	z-index: 10;
+  background-color: lavenderblush;
+}
+
+.mp-sticky {
+	list-style: none;
+	padding-left: 0;
+}
+
+.mp-sticky-icon {
+	margin: 10px 10px;
+	height: 25px;
+	width: 25px;
 }

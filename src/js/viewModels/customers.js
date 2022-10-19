@@ -210,24 +210,6 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
         rvm.showLoader();
         const tracker = document.getElementById("trackerAdd");
         if (tracker.valid === "valid") {
-          // services.addFirebaseICPOST(this.serviceURL, postData)
-          //   .done((response) => {
-          //     if (response) {
-          //       this.refreshCustomer();
-          //       document.getElementById("addNewCustomer").close();
-          //       rvm.hideLoader();
-          //       rvm.messagesInfo(rvm.getMessagesData("confirmation", "Customer", "Added Successfully"));
-          //     }
-          //   })
-          //   .catch((error) => {
-          //     rvm.hideLoader();
-          //     rvm.messagesInfo(rvm.getMessagesData("error", error.statusText, error.responseJSON.error));
-          //   });
-          // var lastCust = "";
-          // var database = firebase.database();
-          // var database_ref = database.ref();
-          // database_ref.child('ICDB/user1').set(postData);
-
           var myRef = firebase.database().ref('ICDB');
           myRef.push(postData);
           document.getElementById("addNewCustomer").close();
@@ -285,20 +267,6 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
         this.CREATED_ON("");
       };
 
-      // this.refreshCustomer = () => {
-      //   services.getFirebaseICGET(this.serviceURL)
-      //     .done((response) => {
-      //       var result = Object.keys(response).map((key) => [key, response[key]]);
-      //       this.baseCustArray(result);
-      //       this.customerArray(this.generateCusttArray(1000));
-      //       this.createOptionsArray(Object.values(response));
-      //     })
-      //     .catch((error) => {
-      //       rvm.hideLoader();
-      //       rvm.messagesInfo(rvm.getMessagesData("error", error.statusText, error.responseJSON.error));
-      //     });
-      // };
-
       this.createOptionsArray = (response) => {
         var constArray = [];
         var indArray = [];
@@ -309,6 +277,22 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
         indArray = indArray.filter((el) => { return el != "" })
         this.INDUSTRY_TYPEARRAY(indArray.map((str) => ({ value: str, label: str })));
       };
+
+      this.deleteCustPop = (event, context) => {
+        this.clearCustomer();
+        this.SL_NO(context.item.data.SL_NO);
+        document.getElementById("deleteCustomer").open();
+    };
+
+    this.deleteCustomerAC = () => {
+        rvm.showLoader();
+        var database = firebase.database();
+        var database_ref = database.ref();
+        database_ref.child('ICDB/' + this.SL_NO()).remove();
+        rvm.messagesInfo(rvm.getMessagesData("confirmation", "Customer", "Deleted Successfully"));
+        rvm.hideLoader();
+        document.getElementById("deleteCustomer").close();
+    };
 
 
       // Below are a set of the ViewModel methods invoked by the oj-module component.

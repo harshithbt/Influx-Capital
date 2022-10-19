@@ -9,7 +9,7 @@
  * Your dashboard ViewModel code goes here
  */
 define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojbootstrap", "ojs/ojarraydataprovider", "ojs/ojlistdataproviderview", "ojs/ojdataprovider", "ojs/ojconverterutils-i18n",
-    "ojs/ojknockout", "ojs/ojtable", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojformlayout", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojselectsingle", "../firebasejs/firebase-app", "../firebasejs/firebase-auth", "../firebasejs/firebase-database"],
+    "ojs/ojknockout", "ojs/ojtable", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojformlayout", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojselectsingle", "ojs/ojdatetimepicker", "../firebasejs/firebase-app", "../firebasejs/firebase-auth", "../firebasejs/firebase-database"],
     function (accUtils, services, require, exports, ko, ojbootstrap_1, ArrayDataProvider, ListDataProviderView, ojdataprovider_1, ojconverterutils_i18n_1) {
         function AdminViewModel(params) {
             const rvm = ko.dataFor(document.getElementById("pageContent"));
@@ -25,6 +25,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
             this.isLogin = rvm.isLogin;
             this.userRole = rvm.userRole;
             this.smScreen = rvm.smScreen;
+            this.loggedUserUid = rvm.uid;
 
             this.ROLEARRAY = ko.observableArray();
             this.dataProviderRole = new ArrayDataProvider(this.ROLEARRAY, {
@@ -137,7 +138,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
             this.columnArray = [
                 { headerText: 'Profile Picture', template: 'proTemplate', id: 'proPicUrl' },
                 { headerText: 'Email', renderer: this.highlightingCellRenderer, id: 'email' },
-                { headerText: 'Last Login', renderer: this.highlightingCellRenderer, id: 'last_login' },
+                { headerText: 'Last Login', id: 'last_login', template: 'loginCellTemplate' },
                 { headerText: 'Phone Number', renderer: this.highlightingCellRenderer, id: 'phone' },
                 { headerText: 'User Role', renderer: this.highlightingCellRenderer, id: 'role' },
                 { headerText: 'ACTIONS', template: 'editCellTemplate', id: 'Actions' }
@@ -207,12 +208,12 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
             };
 
             this.photoUrl = (event) => {
-                var url = "" 
+                var url = ""
                 if (event.row.proPicUrl) {
                     url = event.row.proPicUrl
                 }
                 return url;
-                
+
             };
 
             this.userInitial = (event) => {
@@ -222,7 +223,34 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                     initial = ""
                 }
                 return initial;
-                
+
+            };
+
+            this.deleteUserPop = (event, context) => {
+                this.clearUser();
+                this.UID(context.item.data.UID);
+                document.getElementById("deleteUser").open();
+            };
+
+            this.deleteUserAC = () => {
+                rvm.showLoader();
+                var user = firebase.auth().getUser(this.UID());
+                user.delete()
+                    .then(() => {
+                        var database = firebase.database();
+                        var database_ref = database.ref();
+                        database_ref.child('users/' + this.UID()).remove();
+                        rvm.messagesInfo(rvm.getMessagesData("confirmation", "User " + this.UID(), "Deleted Successfully"));
+                        rvm.hideLoader();
+                        document.getElementById("deleteUser").close();
+                    })
+                    .catch((error) => {
+                        var errorCode = error.code;
+                        var errorMessage = error.message;
+                        rvm.hideLoader();
+                        document.getElementById("deleteUser").close();
+                        rvm.messagesInfo(rvm.getMessagesData("error", errorCode.split("/")[1], errorMessage));
+                    });
             };
 
 

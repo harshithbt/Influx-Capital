@@ -4,8 +4,8 @@
  as shown at https://oss.oracle.com/licenses/upl/
  -->
 <div class="ooj-hybrid-padding oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
-  <h1 class="oj-typography-subheading-sm">About Us</h1>
-
+  <h1 :class="[[smScreen() ? 'oj-typography-subheading-sm oj-sm-padding-2x' : 'oj-typography-subheading-sm oj-sm-padding-8x']]">About Us</h1>
+  
   <div
     :class="[[smScreen() ? 'home-img-main oj-flex oj-sm-flex-direction-column' : 'home-img-main oj-flex oj-sm-flex-direction-row']]">
 
@@ -14,9 +14,7 @@
     <div
       :class="[[smScreen() ? 'oj-flex stretchfull ic-block-style ic-home-info oj-sm-align-items-center' : 'oj-flex bg-stretch ic-block-style ic-home-info oj-sm-align-items-center']]">
       <p class="home-text"><span class="oj-flex oj-sm-padding-4x">
-          We are a team of financial experts who are ready on their toes to assist you with the perfect solution. We
-          have all the answers related to your loan query and consultation. Influx Capital has helped numerous
-          businesses to stand on their own with our financial acumen.
+        Influx Capital is with you at every step whenever you need clarity dealing with your finances. We are up with the best consultation to resolve your dilemma by choosing the most trusted partners. We also help you find the perfect and most cost-effective funding for all your ventures and real estate businesses. The company founder, Mr. Jay Kumar, and Co-Founder, Mrs. Yogita Bali, are experts in Business Banking. They added on their experience in the finance sector, and post gaining confidence, in 2016, they started up their own venture. Since then, they are successfully helping businesses to stand up and grow.
         </span></p>
     </div>
 

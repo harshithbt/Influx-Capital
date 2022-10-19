@@ -8,7 +8,7 @@
 /*
  * Your application specific code will go here
  */
-define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/icutility', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojmessages", "ojs/ojprogress-circle", "ojs/ojavatar", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
+define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/icutility', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojmessages", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojavatar", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
   'ojs/ojdrawerpopup', 'ojs/ojmodule-element', 'ojs/ojknockout'],
   function (ko, $, Context, cookie, icUtils, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider) {
 
@@ -76,12 +76,9 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
               }
             });
           } else {
-            // User is signed out
-            // ...
+            router.go({ path: 'login' });
           }
       };
-
-      this.getUserDetails();
 
       announcementHandler = (event) => {
         this.message(event.detail.message);
@@ -103,7 +100,6 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         { path: 'customers', detail: { label: 'Customers' } },
         { path: 'about', detail: { label: 'About' } },
         { path: 'login', detail: { label: 'Login' } },
-        { path: 'help', detail: { label: 'Help' } },
         { path: 'preference', detail: { label: 'Preference' } },
         { path: 'admin', detail: { label: 'Admin' } }
       ];
@@ -188,12 +184,39 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         if (page === "login") {
           document.getElementById("mainHeader").style.display = "none";
           document.getElementById("mainFooter").style.display = "none";
+          document.getElementById("icSideIcons").style.display = "none";
         } else {
           document.getElementById("mainHeader").style.display = "block";
           document.getElementById("mainFooter").style.display = "block";
+          document.getElementById("icSideIcons").style.display = "block";
         }
       };
 
+      this.callUsAction = () => {
+        document.getElementById("call-us-dialog").open();
+      }
+
+      this.helpAction = () => {
+        document.getElementById("help-dialog").open();
+      }
+
+      this.messageAction = () => {
+        document.getElementById("message-dialog").open();
+      }
+
+      this.closeCallUs = () => {
+        document.getElementById("call-us-dialog").close();
+      }
+
+      this.closeHelp = () => {
+        document.getElementById("help-dialog").close();
+      }
+
+      this.closeMessage = () => {
+        document.getElementById("message-dialog").close();
+      }
+
+      
 
       // Header
       // Application Name used in Branding Area
@@ -208,6 +231,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         { name: "Terms Of Use", id: "termsOfUse", linkTarget: "http://www.oracle.com/us/legal/terms/index.html" },
         { name: "Your Privacy Rights", id: "yourPrivacyRights", linkTarget: "http://www.oracle.com/us/legal/privacy/index.html" },
       ];
+      this.getUserDetails();
     }
     // release the application bootstrap busy state
     Context.getPageContext().getBusyContext().applicationBootstrapComplete();
