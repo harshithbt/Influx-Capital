@@ -99,9 +99,12 @@ html[dir="rtl"] .demo-oracle-icon {
   height: 50vh;
 }
 
+.ic-block-style, .img_home, .img_help, .img_about {
+  border-radius: 2rem;
+}
+
 .ic-block-style {
   background: linear-gradient(180deg,#ff1c1c 0,#c90063 100%);
-  border-radius: 2rem;
 }
 
 .img_home {
@@ -140,7 +143,8 @@ html[dir="rtl"] .demo-oracle-icon {
 	top: calc(50% - 90px);
 	width: 200px;
 	z-index: 10;
-  background-color: lavenderblush;
+  background-color: rgba(0,0,0,0.115);
+  border-radius: 10%;
 }
 
 .mp-sticky {
@@ -152,4 +156,12 @@ html[dir="rtl"] .demo-oracle-icon {
 	margin: 10px 10px;
 	height: 25px;
 	width: 25px;
+}
+
+#component-container demo-card .demo-card-front-side {
+  background: linear-gradient(180deg,#ff1c1c 0,#c90063 100%);
+}
+
+#component-container {
+  padding: 0.9375rem;
 }

@@ -50,25 +50,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                             cookie.createUserCookie(user.email, disName, icUtils.generateRandomString(), ojconverterutils_i18n_1.IntlConverterUtils.getInitials(disName), userCredential.uid);
                             var database = firebase.database();
                             var database_ref = database.ref();
-                            var ddUserRole = firebase.database().ref("users/" + userCredential.uid);
-                            ddUserRole.on("value", (snapshot) => {
-                                if (snapshot.exists()) {
-                                    var resp = snapshot.val();
-                                    // update user data
-                                    rvm.userImage(resp.proPicUrl);
-                                    rvm.userRole(resp.role);
-                                    rvm.phoneNumber(resp.phone);
-                                    var user_data = {
-                                        email: userCredential.email,
-                                        role: resp.role,
-                                        phone: resp.phone,
-                                        proPicUrl: resp.proPicUrl,
-                                        last_login: ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date())
-                                    }
-                                    database_ref.child('users/' + userCredential.uid).set(user_data);
-                                }
-                            });
-
+                            database_ref.child('users/' + userCredential.uid + '/last_login').set(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date()));
                             rvm.hideLoader();
                             params.router.go({ path: 'home' });
                         })
@@ -129,6 +111,8 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                                 role: "new",
                                 phone: "",
                                 proPicUrl: "",
+                                name: "",
+                                title: "",
                                 last_login: ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date())
                             }
                             database_ref.child('users/' + userCredential.uid).set(user_data);
@@ -184,6 +168,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                 accUtils.announce('Login page loaded.', 'assertive');
                 document.title = "IC | Login";
                 rvm.headerFooterCond("login");
+                rvm.hideLoader();
                 if (rvm.isLogin()) {
                     params.router.go({ path: 'home' });
                 }
@@ -194,6 +179,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
              */
             this.disconnected = () => {
                 // Implement if needed
+                rvm.showLoader();
             };
 
             /**

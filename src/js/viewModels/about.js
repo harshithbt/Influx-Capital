@@ -28,6 +28,7 @@ define(["knockout", "../accUtils"],
         accUtils.announce('About page loaded.', 'assertive');
         document.title = "IC | About";
         rvm.headerFooterCond("");
+        rvm.hideLoader();
         if (!rvm.isLogin()) {
           params.router.go({path: 'login'});
       }
@@ -39,6 +40,7 @@ define(["knockout", "../accUtils"],
        */
       this.disconnected = () => {
         // Implement if needed
+        rvm.showLoader();
       };
 
       /**

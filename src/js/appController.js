@@ -101,7 +101,8 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         { path: 'about', detail: { label: 'About' } },
         { path: 'login', detail: { label: 'Login' } },
         { path: 'preference', detail: { label: 'Preference' } },
-        { path: 'admin', detail: { label: 'Admin' } }
+        { path: 'admin', detail: { label: 'Admin' } },
+        { path: 'org', detail: { label: 'Organization' } }
       ];
 
       let navData = [
@@ -169,6 +170,8 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
           router.go({ path: 'preference' });
         } else if (event.detail.selectedValue === "admin") {
           router.go({ path: 'admin' });
+        } else if (event.detail.selectedValue === "org") {
+          router.go({ path: 'org' });
         }
       }
 

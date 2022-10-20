@@ -18,11 +18,11 @@
 <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
   <div class="oj-sm-margin-4x-bottom">
     <div class="oj-flex-item">
-      <oj-bind-text value="Email: "></oj-bind-text>
+      <strong><oj-bind-text value="Email: "></oj-bind-text></strong>
       <oj-bind-text value="[[emailAddress]]"></oj-bind-text>
     </div>
     <div class="oj-flex-item">
-      <oj-bind-text value="Role: "></oj-bind-text>
+    <strong><oj-bind-text value="Role: "></oj-bind-text></strong>
       <oj-bind-text value="[[userRole]]"></oj-bind-text>
     </div>
   </div>
@@ -50,13 +50,16 @@
     <div slot="body">
       <div class="oj-sm-padding-2x-top" id="propic-form-container">
         <oj-file-picker id="width25em" class="demo-max-width-25em" accept="[[acceptArr]]" selection-mode="single"
-          on-oj-select="[[selectListener]]"></oj-file-picker>
+          on-oj-select="[[selectListener]]" on-oj-invalid-select="[[invalidListener]]"
+          on-oj-before-select="[[beforeSelectListener]]"></oj-file-picker>
         <oj-bind-text value="[[fileName]]"></oj-bind-text>
         <oj-bind-if test="[[progressValue() != 0]]">
           <oj-progress-bar id="progressBar" value="{{progressValue}}"></oj-progress-bar>
           <oj-bind-text value="[[progressValue]]"></oj-bind-text>
           <oj-bind-text value=" %"></oj-bind-text>
         </oj-bind-if>
+        <span class="oj-text-color-danger"><oj-bind-text value="[[invalidMessage]]"></oj-bind-text>
+        </span>
       </div>
     </div>
     <div slot="footer">

@@ -8,8 +8,8 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojfilepicker", "ojs/ojprogress-bar", "../firebasejs/firebase-app", "../firebasejs/firebase-auth", "../firebasejs/firebase-storage"],
-  function (ko, accUtils) {
+define(["knockout", "../accUtils", "ojs/ojarraydataprovider", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojfilepicker", "ojs/ojprogress-bar", "../firebasejs/firebase-app", "../firebasejs/firebase-auth", "../firebasejs/firebase-storage"],
+  function (ko, accUtils, ArrayDataProvider) {
     function PreferenceViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));
       this.emailAddress = rvm.userEmail;
@@ -24,6 +24,7 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
       this.uid = ko.observable();
       this.uploadEvent = ko.observable();
       this.progressValue = ko.observable(0);
+      this.invalidMessage = ko.observable("");
 
       // Below are a set of the ViewModel methods invoked by the oj-module component.
       // Please reference the oj-module jsDoc for additional information.
@@ -57,6 +58,9 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
           displayName: this.userName() || ""
         }).then(() => {
           this.userName(user.displayName || "");
+          var database = firebase.database();
+          var database_ref = database.ref();
+          database_ref.child('users/' + this.uid() + '/name').set(this.userName() || "");
           rvm.hideLoader();
           rvm.messagesInfo(rvm.getMessagesData("confirmation", "User Name", "Updated Successfully"));
         }).catch((error) => {
@@ -71,7 +75,7 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
         rvm.showLoader();
         var database = firebase.database();
         var database_ref = database.ref();
-        database_ref.child('users/' + this.uid()+'/phone').set(this.phoneNumber());
+        database_ref.child('users/' + this.uid() + '/phone').set(this.phoneNumber());
         rvm.phoneNumber(this.phoneNumber());
         rvm.hideLoader();
         rvm.messagesInfo(rvm.getMessagesData("confirmation", "Phone Number", "Updated Successfully"));
@@ -79,6 +83,7 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
 
       this.updateProfilePicButton = () => {
         this.fileName("");
+        this.invalidMessage("");
         this.uploadEvent("");
         this.progressValue(0)
         document.getElementById("uploadProPic").open();
@@ -128,7 +133,7 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
                 rvm.userImage(downloadURL);
                 var database = firebase.database();
                 var database_ref = database.ref();
-                database_ref.child('users/' + this.uid()+'/proPicUrl').set(downloadURL);
+                database_ref.child('users/' + this.uid() + '/proPicUrl').set(downloadURL);
                 document.getElementById("uploadProPic").close();
                 rvm.messagesInfo(rvm.getMessagesData("confirmation", "Profile Picture", "Uploaded Successfully"));
               });
@@ -144,11 +149,61 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
         this.fileName(file.name);
       };
 
+      this.invalidListener = (event) => {
+        this.fileName("");
+        this.invalidMessage(event.detail.messages[0].severity + " :" + event.detail.messages[0].summary);
+        const promise = event.detail.until;
+        if (promise) {
+          promise.then(() => {
+            this.invalidMessage("");
+          });
+        }
+      };
+
+
+      this.beforeSelectListener = (event) => {
+        const accept = event.detail.accept;
+        const files = event.detail.files;
+        const messages = [];
+        let file;
+        const invalidFiles = [];
+        for (let i = 0; i < files.length; i++) {
+          file = files[i];
+          if (file.size > 100000) {
+            invalidFiles.push(file.name);
+          }
+        }
+        if (invalidFiles.length === 0) {
+          accept(Promise.resolve());
+        }
+        else {
+          if (invalidFiles.length === 1) {
+            messages.push({
+              severity: "Error",
+              summary: "File " +
+                invalidFiles[0] +
+                " is too big.  The maximum size is 100kb.",
+            });
+          }
+          else {
+            const fileNames = invalidFiles.join(", ");
+            messages.push({
+              severity: "Error",
+              summary: "These files are too big: " +
+                fileNames +
+                ".  The maximum size is 100kb.",
+            });
+          }
+          accept(Promise.reject(messages));
+        }
+      };
+
       this.connected = () => {
         accUtils.announce('Preference page loaded.', 'assertive');
         document.title = "IC | Preference";
         rvm.headerFooterCond("");
         this.getCurrentUser();
+        rvm.hideLoader();
         if (!rvm.isLogin()) {
           params.router.go({ path: 'login' });
         }
@@ -159,6 +214,7 @@ define(["knockout", "../accUtils", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojin
        */
       this.disconnected = () => {
         // Implement if needed
+        rvm.showLoader();
       };
 
       /**

@@ -30,6 +30,7 @@ define(["knockout", "../accUtils"],
         accUtils.announce('About page loaded.', 'assertive');
         document.title = "IC | Home";
         rvm.headerFooterCond("");
+        rvm.hideLoader();
         if (!rvm.isLogin()) {
           params.router.go({ path: 'login' });
         }
@@ -39,7 +40,7 @@ define(["knockout", "../accUtils"],
        * Optional ViewModel method invoked after the View is disconnected from the DOM.
        */
       this.disconnected = () => {
-        // Implement if needed
+        rvm.showLoader();
       };
 
       /**

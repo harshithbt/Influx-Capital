@@ -310,6 +310,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
         accUtils.announce('Customers page loaded.', 'assertive');
         document.title = "IC | Customers";
         rvm.headerFooterCond("");
+        rvm.hideLoader();
         if (!rvm.isLogin()) {
           params.router.go({ path: 'login' });
         }
@@ -323,6 +324,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
        */
       this.disconnected = () => {
         // Implement if needed
+        rvm.showLoader();
       };
 
       /**

@@ -14,10 +14,12 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
         function AdminViewModel(params) {
             const rvm = ko.dataFor(document.getElementById("pageContent"));
 
-            this.baseUserArray = ko.observable();
+            this.baseUserArray = ko.observableArray();
             this.userArray = ko.observableArray();
             this.UID = ko.observable();
             this.email = ko.observable();
+            this.name = ko.observable();
+            this.title = ko.observable();
             this.last_login = ko.observable();
             this.phone = ko.observable();
             this.proPicUrl = ko.observable();
@@ -56,14 +58,16 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                 this.baseUserArray().forEach((user, index) => {
                     userArray.push({
                         UID: user[0],
-                        email: user[1].email,
-                        last_login: user[1].last_login,
-                        phone: user[1].phone,
-                        proPicUrl: user[1].proPicUrl,
-                        role: user[1].role
+                        email: user[1].email || "",
+                        name: user[1].name || "",
+                        title: user[1].title || "",
+                        last_login: user[1].last_login || "",
+                        phone: user[1].phone || "",
+                        proPicUrl: user[1].proPicUrl || "",
+                        role: user[1].role || ""
                     });
                 });
-                return userArray;
+                return userArray;  
             };
 
             this.dataprovider = ko.computed(function () {
@@ -149,6 +153,8 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                 this.clearUser();
                 this.UID(context.item.data.UID);
                 this.email(context.item.data.email);
+                this.name(context.item.data.name);
+                this.title(context.item.data.title);
                 this.last_login(context.item.data.last_login);
                 this.phone(context.item.data.phone);
                 this.proPicUrl(context.item.data.proPicUrl);
@@ -164,10 +170,12 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
             this.editUserAC = (event) => {
                 var postData = {
                     "email": this.email(),
-                    "last_login": this.last_login(),
+                    "role": this.role(),
                     "phone": this.phone(),
                     "proPicUrl": this.proPicUrl(),
-                    "role": this.role()
+                    "name": this.name(),
+                    "title": this.title(),
+                    "last_login": this.last_login()
                 };
                 rvm.showLoader();
                 const tracker = document.getElementById("trackerEdit");
@@ -194,6 +202,8 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                 this.phone("");
                 this.proPicUrl("");
                 this.role("");
+                this.name("");
+                this.title("");
             };
 
 
@@ -269,6 +279,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                 accUtils.announce('Amin page loaded.', 'assertive');
                 document.title = "IC | Admin";
                 rvm.headerFooterCond("");
+                rvm.hideLoader();
                 if (!rvm.isLogin()) {
                     params.router.go({ path: 'login' });
                 }
@@ -282,6 +293,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
              */
             this.disconnected = () => {
                 // Implement if needed
+                rvm.showLoader();
             };
 
             /**
