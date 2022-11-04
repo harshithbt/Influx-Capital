@@ -8,9 +8,9 @@
 /*
  * Your application specific code will go here
  */
-define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/icutility', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojmessages", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojavatar", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
+define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/firebase-config', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
   'ojs/ojdrawerpopup', 'ojs/ojmodule-element', 'ojs/ojknockout'],
-  function (ko, $, Context, cookie, icUtils, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider) {
+  function (ko, $, Context, cookie, fConfig, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1) {
 
     function ControllerViewModel(params) {
 
@@ -30,6 +30,25 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       this.userRole = ko.observable();
       this.phoneNumber = ko.observable();
       this.displayName = ko.observable();
+      this.sendMessage = ko.observable();
+      this.messageUser = ko.observableArray();
+      this.messageUserDataProvider = ko.observable(new ArrayDataProvider(this.messageUser(), { keyAttributes: "uid" }));
+
+      this.usersMessagesArray = ko.observableArray();
+      this.messageArrayDataProvider = ko.observable(new ArrayDataProvider(this.usersMessagesArray(), { keyAttributes: "ID" }));
+
+      this.messageUserSelectedItems = new ojknockout_keyset_1.ObservableKeySet();
+      this.messageSelectedItems = new ojknockout_keyset_1.ObservableKeySet();
+
+      this.firstSelectedItemMessage = ko.observable();
+      this.deleteMessageVal = ko.observable();
+      this.deleteOwner = ko.observable();
+
+
+      this.userMessageSelected = ko.observableArray();
+      this.firstSelectedItem = ko.observable();
+      this.selectedUserName = ko.observable();
+      this.scrollPos = ko.observable({ y: 10000 });
 
       this.getMessagesData = (type, sum, message) => {
         return [
@@ -45,40 +64,8 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
 
       this.messagesInfo = ko.observableArray();
       this.messagesDataprovider = new ArrayDataProvider(this.messagesInfo);
-
-
-
-      // Your web app's Firebase configuration
-      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-      const firebaseConfig = {
-        apiKey: "AIzaSyCR_UfcFNlRHgtjyBX-Wn3HQFkfFUs9KrU",
-        authDomain: "influx-capital.firebaseapp.com",
-        databaseURL: "https://influx-capital-default-rtdb.firebaseio.com",
-        projectId: "influx-capital",
-        storageBucket: "influx-capital.appspot.com",
-        messagingSenderId: "609489391928",
-        appId: "1:609489391928:web:689ca8fde590678ac2b1cd",
-        measurementId: "G-6S97YHQEXC"
-      };
-
       // Initialize Firebase
-      const firebaseapp = firebase.initializeApp(firebaseConfig);
-
-      this.getUserDetails = () => {
-          if (this.uid() && this.isLogin()) {
-            var ddUserRole = firebase.database().ref("users/" + this.uid());
-            ddUserRole.on("value", (snapshot) => {
-              if (snapshot.exists()) {
-                var resp = snapshot.val();
-                this.userImage(resp.proPicUrl);
-                this.userRole(resp.role);
-                this.phoneNumber(resp.phone);
-              }
-            });
-          } else {
-            router.go({ path: 'login' });
-          }
-      };
+      const firebaseapp = firebase.initializeApp(fConfig.firebaseConfig);
 
       announcementHandler = (event) => {
         this.message(event.detail.message);
@@ -139,7 +126,9 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
 
 
       this.logoutButton = () => {
-        var provider = new firebase.auth.GoogleAuthProvider();
+        var database = firebase.database();
+        var database_ref = database.ref();
+        database_ref.child('users/' + this.uid() + '/last_logout').set(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date()));
 
         firebase.auth().signOut().then((result) => {
           this.userEmail("");
@@ -203,8 +192,48 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         document.getElementById("help-dialog").open();
       }
 
-      this.messageAction = () => {
-        document.getElementById("message-dialog").open();
+      this.messageAction = (event) => {
+        const dbRef = firebase.database().ref("users");
+        dbRef.on("value", (snapshot) => {
+          if (snapshot.exists()) {
+            var resp = snapshot.val();
+            var result = Object.keys(resp).map((key) => [key, resp[key]]);
+            this.messageUser([]);
+            this.userMessageSelected([]);
+            this.sendMessage("");
+            this.usersMessagesArray([]);
+            result.forEach((user) => {
+              if (this.uid() !== user[0]) {
+                this.messageUser().push({
+                  uid: user[0],
+                  name: user[1].name,
+                  title: user[1].title,
+                  image: user[1].proPicUrl,
+                  email: user[1].email
+                });
+              }
+            });
+            this.messageUserDataProvider(new ArrayDataProvider(this.messageUser(), { keyAttributes: "uid" }));
+            document.getElementById("message-dialog").open();
+          } else {
+            rvm.messagesInfo(rvm.getMessagesData("error", "Error", "No data available"));
+          }
+        });
+      }
+
+      this.getSelectedUidMessage = (set) => {
+        return JSON.stringify(Array.from(set.values()));
+      }
+
+      this.getSelectedUidMessageforDelete = (set) => {
+        return JSON.stringify(Array.from(set.values()));
+      }
+
+      this.backToUsers = () => {
+        this.userMessageSelected([]);
+        this.usersMessagesArray([]);
+        this.deleteMessageVal("");
+        this.deleteOwner("");
       }
 
       this.closeCallUs = () => {
@@ -215,11 +244,102 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         document.getElementById("help-dialog").close();
       }
 
-      this.closeMessage = () => {
-        document.getElementById("message-dialog").close();
+      this.sendMessageAc = () => {
+        if (this.sendMessage()) {
+          var userArry = [];
+          userArry.push(this.uid());
+          userArry.push(this.userMessageSelected().split('"')[1]);
+          userArry.sort();
+          var messageId = "";
+          messageId = userArry.toString();
+          const dbRef = firebase.database().ref().child('messages/' + messageId);
+          var database = firebase.database();
+          var database_ref = database.ref()
+          var message_data = {
+            uid: this.uid(),
+            message: this.sendMessage(),
+            time: ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date())
+          }
+          dbRef.push(message_data);
+          this.sendMessage("");
+          var objDiv = document.getElementById("end-chat-refer");
+          objDiv.scrollTop = objDiv.scrollHeight;
+        }
       }
 
-      
+      this.handleSelectedChangedMessageUser = () => {
+        this.sendMessage("");
+        this.usersMessagesArray([]);
+        var friend = this.getSelectedUidMessage(this.messageUserSelectedItems());
+        this.selectedUserName(this.firstSelectedItem().data.name || this.firstSelectedItem().data.email);
+        var userArry = [];
+        userArry.push(this.uid());
+        userArry.push(friend.split('"')[1]);
+        userArry.sort();
+        var messageId = "";
+        messageId = userArry.toString();
+
+        const dbRef = firebase.database().ref().child('messages/' + messageId);
+        dbRef.on("value", (snapshot) => {
+          if (snapshot.exists()) {
+            var messages = [];
+            var resp = snapshot.val();
+            var result = Object.keys(resp).map((key) => [key, resp[key]]);
+            result.forEach((user) => {
+              messages.push({
+                ID: user[0],
+                message: user[1].message,
+                sender: user[1].uid === this.uid() ? true : false,
+                time: user[1].time
+              });
+            });
+            this.usersMessagesArray(messages);
+            this.messageArrayDataProvider(new ArrayDataProvider(this.usersMessagesArray(), { keyAttributes: "ID" }));
+            this.userMessageSelected(friend);
+            var objDiv = document.getElementById("end-chat-refer");
+            objDiv.scrollTop = objDiv.scrollHeight;
+          } else {
+            this.userMessageSelected(friend);
+          }
+        });
+
+      };
+
+      this.messageTimeFormater = (d) => {
+        var res = "";
+        var newD = new Date(d);
+        let text = newD.toString();
+        text = text.split(" ");
+        res = text[0] + " " + text[1] + " " + text[2] + " " + text[3] + " " + text[4];
+        return res;
+      }
+
+      this.messageDeteleAC = () => {
+        alert("Under Construction !!!");
+      }
+
+      this.handleSelectedChangedMessage = () => {
+        var message = this.getSelectedUidMessageforDelete(this.messageSelectedItems());
+        message = message.split('"')[1];
+        this.deleteMessageVal(message);
+        if (this.firstSelectedItem().data.uid === this.uid()) {
+          this.deleteOwner("true");
+        } else {
+          this.deleteOwner("");
+        }
+      }
+
+      this.sendValueChanged = (event) => {
+        // if (event.keyCode === 13) {
+        //   this.sendMessageAc();
+        // }
+      }
+
+      this.NavigateHome = () => {
+        router.go({ path: 'home' });
+      }
+
+
 
       // Header
       // Application Name used in Branding Area
@@ -232,9 +352,30 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         { name: "Contact Us", id: "contactUs", linkTarget: "http://www.oracle.com/us/corporate/contact/index.html" },
         { name: "Legal Notices", id: "legalNotices", linkTarget: "http://www.oracle.com/us/legal/index.html" },
         { name: "Terms Of Use", id: "termsOfUse", linkTarget: "http://www.oracle.com/us/legal/terms/index.html" },
-        { name: "Your Privacy Rights", id: "yourPrivacyRights", linkTarget: "http://www.oracle.com/us/legal/privacy/index.html" },
+        { name: "Your Privacy Rights", id: "yourPrivacyRights", linkTarget: "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js" },
       ];
-      this.getUserDetails();
+
+      this.init = () => {
+        try {
+          if (this.uid() && this.isLogin()) {
+            var ddUserRole = firebase.database().ref("users/" + this.uid());
+            ddUserRole.on("value", (snapshot) => {
+              if (snapshot.exists()) {
+                var resp = snapshot.val();
+                this.userImage(resp.proPicUrl);
+                this.userRole(resp.role);
+                this.phoneNumber(resp.phone);
+              }
+            });
+          } else {
+            router.go({ path: 'login' });
+          }
+        } catch (error) {
+          console.log("error", error);
+          // location.reload();
+        }
+      };
+      this.init();
     }
     // release the application bootstrap busy state
     Context.getPageContext().getBusyContext().applicationBootstrapComplete();

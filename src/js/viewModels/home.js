@@ -8,11 +8,14 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils"],
-  function (ko, accUtils) {
+define(["knockout", "../accUtils", "../firebasejs/cookie"],
+  function (ko, accUtils, cookie) {
     function HomeViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));
       this.smScreen = rvm.smScreen;
+      this.userRole = rvm.userRole;
+      this.userImage = rvm.userImage;
+      this.phoneNumber = rvm.phoneNumber;
       // Below are a set of the ViewModel methods invoked by the oj-module component.
       // Please reference the oj-module jsDoc for additional information.
 
@@ -25,6 +28,19 @@ define(["knockout", "../accUtils"],
        * after being disconnected.
        */
 
+      this.getDetails = () => {
+        var uid = cookie.getUserCookieArray()[5] || "";
+          var ddUserRole = firebase.database().ref("users/" + uid);
+          ddUserRole.on("value", (snapshot) => {
+            if (snapshot.exists()) {
+              var resp = snapshot.val();
+              this.userImage(resp.proPicUrl);
+              this.userRole(resp.role);
+              this.phoneNumber(resp.phone);
+            }
+          });
+      };
+
 
       this.connected = () => {
         accUtils.announce('About page loaded.', 'assertive');
@@ -33,6 +49,8 @@ define(["knockout", "../accUtils"],
         rvm.hideLoader();
         if (!rvm.isLogin()) {
           params.router.go({ path: 'login' });
+        } else if (!this.userRole()) {
+          this.getDetails();
         }
       };
 

@@ -8,9 +8,9 @@
 /*
  * Your dashboard ViewModel code goes here
  */
-define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojbootstrap", "ojs/ojarraydataprovider", "ojs/ojlistdataproviderview", "ojs/ojdataprovider", "ojs/ojconverterutils-i18n",
+define(["../accUtils", "../services", "../firebasejs/icutility", "require", "exports", "knockout", "ojs/ojbootstrap", "ojs/ojarraydataprovider", "ojs/ojlistdataproviderview", "ojs/ojdataprovider", "ojs/ojconverterutils-i18n",
   "ojs/ojknockout", "ojs/ojtable", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojformlayout", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojselectcombobox", "../firebasejs/firebase-app", "../firebasejs/firebase-auth", "../firebasejs/firebase-database"],
-  function (accUtils, services, require, exports, ko, ojbootstrap_1, ArrayDataProvider, ListDataProviderView, ojdataprovider_1, ojconverterutils_i18n_1) {
+  function (accUtils, services, icutility,  require, exports, ko, ojbootstrap_1, ArrayDataProvider, ListDataProviderView, ojdataprovider_1, ojconverterutils_i18n_1) {
     function CustomerViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));
 
@@ -293,6 +293,22 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
         rvm.hideLoader();
         document.getElementById("deleteCustomer").close();
     };
+
+    this.exportCustomer = () => {
+      console.log("cust",this.customerArray());
+      var exportData = [];
+      this.customerArray().forEach((cust) => {
+        exportData.push({
+          "GUARATOR/PROP.NAME": cust.GUARATOR_NAME,
+          "FIRM NAME": cust.FIRM_NAME,
+          "CONSTITUTION": cust.CONSTITUTION,
+          "INDUSTRY TYPE": cust.INDUSTRY_TYPE,
+          "MOBILE NUMBER": cust.MOBILE_NUMBER,
+          "COMMENTS": cust.COMMENTS
+        });
+      });
+      icutility.downloadBlob(exportData, "influx-capital.csv");
+    }
 
 
       // Below are a set of the ViewModel methods invoked by the oj-module component.

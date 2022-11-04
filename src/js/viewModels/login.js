@@ -42,6 +42,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                             rvm.userName(disName);
                             rvm.userInitial(ojconverterutils_i18n_1.IntlConverterUtils.getInitials(disName));
                             rvm.isLogin(true);
+                            rvm.uid(userCredential.uid);
                             // rvm.userImage(user.photoURL || "");
                             rvm.displayName(user.displayName || "");
                             // rvm.phoneNumber(user.phoneNumber || "");
@@ -113,7 +114,8 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                                 proPicUrl: "",
                                 name: "",
                                 title: "",
-                                last_login: ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date())
+                                last_login: ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date()),
+                                last_logout: ""
                             }
                             database_ref.child('users/' + userCredential.uid).set(user_data);
                             this.emailAddress("");

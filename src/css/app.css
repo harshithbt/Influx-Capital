@@ -159,9 +159,112 @@ html[dir="rtl"] .demo-oracle-icon {
 }
 
 #component-container demo-card .demo-card-front-side {
-  background: linear-gradient(180deg,#ff1c1c 0,#c90063 100%);
+  /* background: linear-gradient(180deg,#ff1c1c 0,#c90063 100%); */
 }
 
 #component-container {
   padding: 0.9375rem;
 }
+
+.message-main-body-big{
+  height: 300px;
+  width: 100%;
+  display: inline-block;
+}
+
+.message-friend-bck, .message-text-friend{
+  background-color: lightgoldenrodyellow;
+}
+
+.message-my-bck, .message-text-my{
+  background-color: lightgreen;
+}
+.message-friend-bck, .message-my-bck {
+  border-radius: 5px;
+}
+
+#listviewMessage .oj-listview-item-element {
+  padding: 0px !important;
+  min-height: 0px !important;
+}
+
+#listviewMessage .oj-listview:not(.oj-listview-card-layout) .oj-listview-item.oj-selected {
+  border: none !important; 
+}
+
+.message-text-friend, .message-text-my {
+  border: none !important;
+}
+
+#listviewMessage, #listviewUser {
+  height: 300px;
+}
+
+.msg-time {
+  font-size: 11px;
+  color: darkolivegreen;
+}
+
+
+.right {
+  position: relative;
+  background: lightgreen;
+  text-align: right;
+  border-radius: 6px;
+  border: 1px solid lightgreen;
+  float: right;
+  right: 8px;
+}
+
+.right::before {
+  content: '';
+  position: absolute;
+  visibility: visible;
+  top: -1px;
+  right: -10px;
+  border: 10px solid transparent;
+  border-top: 10px solid lightgreen;
+}
+
+.right::after {
+  content: '';
+  position: absolute;
+  visibility: visible;
+  top: 0px;
+  right: -8px;
+  border: 10px solid transparent;
+  border-top: 10px solid lightgreen;
+  clear: both;
+}
+
+.left {
+  position: relative;
+  background: lightgoldenrodyellow;
+  text-align: right;
+  border-radius: 6px;
+  border: 1px solid lightgoldenrodyellow;
+  float: left;
+  left: 8px;
+}
+
+.left::before {
+  content: '';
+  position: absolute;
+  visibility: visible;
+  top: -1px;
+  left: -10px;
+  border: 10px solid transparent;
+  border-top: 10px solid lightgoldenrodyellow;
+}
+
+.left::after {
+  content: '';
+  position: absolute;
+  visibility: visible;
+  top: 0px;
+  left: -8px;
+  border: 10px solid transparent;
+  border-top: 10px solid lightgoldenrodyellow;
+  clear: both;
+}
+

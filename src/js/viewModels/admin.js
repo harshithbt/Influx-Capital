@@ -21,6 +21,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
             this.name = ko.observable();
             this.title = ko.observable();
             this.last_login = ko.observable();
+            this.last_logout = ko.observable();
             this.phone = ko.observable();
             this.proPicUrl = ko.observable();
             this.role = ko.observable();
@@ -62,6 +63,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                         name: user[1].name || "",
                         title: user[1].title || "",
                         last_login: user[1].last_login || "",
+                        last_logout: user[1].last_logout || "",
                         phone: user[1].phone || "",
                         proPicUrl: user[1].proPicUrl || "",
                         role: user[1].role || ""
@@ -97,13 +99,16 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                     field = 'last_login';
                 }
                 else if (context.columnIndex === 3) {
-                    field = 'phone';
+                    field = 'last_logout';
                 }
                 else if (context.columnIndex === 4) {
+                    field = 'phone';
+                }
+                else if (context.columnIndex === 5) {
                     field = 'role';
                 }
                 let data = "";
-                if (context.columnIndex <= 4 && context.columnIndex != 0) {
+                if (context.columnIndex <= 5 && context.columnIndex != 0) {
                     data = context.row[field].toString();
                 }
 
@@ -143,6 +148,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                 { headerText: 'Profile Picture', template: 'proTemplate', id: 'proPicUrl' },
                 { headerText: 'Email', renderer: this.highlightingCellRenderer, id: 'email' },
                 { headerText: 'Last Login', id: 'last_login', template: 'loginCellTemplate' },
+                { headerText: 'Last Logout', id: 'last_logout', template: 'logoutCellTemplate' },
                 { headerText: 'Phone Number', renderer: this.highlightingCellRenderer, id: 'phone' },
                 { headerText: 'User Role', renderer: this.highlightingCellRenderer, id: 'role' },
                 { headerText: 'ACTIONS', template: 'editCellTemplate', id: 'Actions' }
@@ -156,6 +162,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                 this.name(context.item.data.name);
                 this.title(context.item.data.title);
                 this.last_login(context.item.data.last_login);
+                this.last_logout(context.item.data.last_logout);
                 this.phone(context.item.data.phone);
                 this.proPicUrl(context.item.data.proPicUrl);
                 this.role(context.item.data.role);
@@ -175,7 +182,8 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                     "proPicUrl": this.proPicUrl(),
                     "name": this.name(),
                     "title": this.title(),
-                    "last_login": this.last_login()
+                    "last_login": this.last_login(),
+                    "last_logout": this.last_logout()
                 };
                 rvm.showLoader();
                 const tracker = document.getElementById("trackerEdit");
@@ -199,6 +207,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                 this.UID("");
                 this.email("");
                 this.last_login("");
+                this.last_logout("");
                 this.phone("");
                 this.proPicUrl("");
                 this.role("");

@@ -28,6 +28,9 @@
                 <template slot="loginCellTemplate" data-oj-as="cell">
                     <oj-input-date-time value="[[cell.row.last_login]]" readonly></oj-input-date-time>
                 </template>
+                <template slot="logoutCellTemplate" data-oj-as="cell">
+                    <oj-input-date-time value="[[cell.row.last_logout]]" readonly></oj-input-date-time>
+                </template>
                 <template slot="editCellTemplate" data-oj-as="cell">
                     <oj-button display="icons" chroming="borderless" on-oj-action="[[editUser]]">
                         <span slot="startIcon" class="oj-ux-ico-edit"></span>
