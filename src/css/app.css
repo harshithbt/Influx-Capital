@@ -268,3 +268,7 @@ html[dir="rtl"] .demo-oracle-icon {
   clear: both;
 }
 
+.oj-listview-focused-element {
+  box-shadow: none !important;
+  border: none !important;
+}

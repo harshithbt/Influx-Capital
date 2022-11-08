@@ -214,7 +214,8 @@
             </oj-button>
           </div>
         </oj-dialog>
-        <oj-dialog id="message-dialog" dialog-title="[[userMessageSelected().length > 0 ? 'Messages' : 'People']]" cancel-behavior="icon">
+        <oj-dialog id="message-dialog" dialog-title="[[userMessageSelected().length > 0 ? 'Messages' : 'People']]"
+          cancel-behavior="icon">
           <div slot="body">
             <oj-bind-if test="[[userMessageSelected().length == 0]]">
               <div class="message-main-body-big oj-panel message-panel" id="user-page">
@@ -228,7 +229,8 @@
                       <span class="oj-typography-body-md oj-text-color-primary">
                         <oj-bind-text value="[[item.data.name ? item.data.name : item.data.email]]"></oj-bind-text>
                       </span>
-                      <oj-avatar slot="leading" size="xs" src="[[item.data.image]]" initials="[[item.data.name.charAt(0) || item.data.email.charAt(0)]]"></oj-avatar>
+                      <oj-avatar slot="leading" size="xs" src="[[item.data.image]]"
+                        initials="[[item.data.name.charAt(0) || item.data.email.charAt(0)]]"></oj-avatar>
                       <span slot="secondary" class="oj-typography-body-sm oj-text-color-secondary">
                         <oj-bind-text value="[[item.data.title]]"></oj-bind-text>
                       </span>
@@ -246,40 +248,55 @@
                 <div class="oj-flex oj-sm-align-items-center">
                   <oj-bind-text value="[[selectedUserName]]"></oj-bind-text>
                 </div>
-                <!-- <oj-bind-if test="[[deleteMessageVal() && deleteOwner()]]">
-                  <oj-button display="icons" chroming="borderless" on-oj-action="[[messageDeteleAC]]" title="Delete">
-                    <span slot="startIcon" class="oj-ux-ico-comment-delete"></span>
-                    Delete
-                  </oj-button>
-                </oj-bind-if> -->
               </div>
               <div class="message-main-body-big oj-panel message-panel" id="messade-page">
-                <oj-list-view id="listviewMessage" class="oj-sm-padding-2x-bottom"
-                  data="[[messageArrayDataProvider]]" selected="{{messageSelectedItems}}"
-                  on-selected-changed="[[handleSelectedChangedMessage]]"
-                  first-selected-item="{{firstSelectedItemMessage}}">
+                <oj-list-view id="listviewMessage" class="oj-sm-padding-2x-bottom" data="[[messageArrayDataProvider]]"
+                  selected="{{messageSelectedItems}}" on-selected-changed="[[handleSelectedChangedMessage]]"
+                  scroll-position="[[scrollPos]]" first-selected-item="{{firstSelectedItemMessage}}">
                   <template slot="itemTemplate" data-oj-as="item">
                     <oj-bind-if test="[[!item.data.sender]]">
-                      <div class="oj-flex oj-sm-flex-items-initial oj-sm-padding-2x-bottom left">
+                      <div class="oj-flex oj-sm-flex-items-initial oj-sm-margin-2x-bottom left" :id="[[item.data.ID]]">
                         <div class="oj-flex-item oj-sm-padding-2x-horizontal message-friend-bck">
-                          <textarea class="message-text-friend" data-bind="html:item.data.message" readonly></textarea></br>
-                          <span class="msg-time">
-                            <oj-bind-text value="[[messageTimeFormater(item.data.time)]]"></oj-bind-text>
-                          </span>
+                          <div class="msg-text">
+                            <oj-text-area value="[[item.data.message]]" :id="[['mes~'+item.data.ID]]" readonly="true">
+                            </oj-text-area>
+                          </div>
+                          <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end msg-time">
+                            <div class="oj-flex-item">
+                              <oj-bind-text value="[[messageTimeFormater(item.data.time)]]"></oj-bind-text>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </oj-bind-if>
                     <oj-bind-if test="[[item.data.sender]]">
-                      <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end oj-sm-padding-2x-bottom right">
+                      <div
+                        class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end oj-sm-margin-2x-bottom right"
+                        :id="[[item.data.ID]]">
                         <div class="oj-flex-item oj-sm-padding-2x-horizontal message-my-bck">
-                          <textarea class="message-text-my" data-bind="html:item.data.message" readonly></textarea></br>
-                          <span class="msg-time">
-                            <oj-bind-text value="[[messageTimeFormater(item.data.time)]]"></oj-bind-text>
+                          <div class="msg-text">
+                            <oj-text-area value="[[item.data.message]]" :id="[['mes~'+item.data.ID]]" readonly="true"
+                              on-value-changed="[[messageEditACValueChanged]]">
+                            </oj-text-area>
+                          </div>
+                          <span :id="[['time~'+item.data.ID]]" style="display: none;">
+                            <oj-bind-text value="[[item.data.time]]"></oj-bind-text>
                           </span>
+                          <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end msg-time">
+                            <div class="oj-flex-item">
+                              <oj-bind-text value="[[messageTimeFormater(item.data.time)]]"></oj-bind-text>
+                            </div>
+                            <oj-bind-if test="[[checkMsgOption(item.data.ID, item.data.time)]]">
+                              <div class="oj-flex-item" :id="[['edit~'+item.data.ID]]" data-bind="click:messageEditAC">
+                                <span class="oj-ux-ico-edit"></span>
+                              </div>
+                              <div class="oj-flex-item" :id="[['del~'+item.data.ID]]" data-bind="click:messageDeteleAC">
+                                <span class="oj-ux-ico-trash"></span>
+                              </div>
+                            </oj-bind-if>
+                          </div>
                         </div>
-                      </div>
                     </oj-bind-if>
-                    <div id="end-chat-refer" style="display: none;"></div>
                   </template>
                 </oj-list-view>
               </div>
@@ -288,9 +305,23 @@
           </div>
           <div slot="footer" class="oj-sm-align-items-center">
             <oj-bind-if test="[[userMessageSelected().length > 0]]">
-              <oj-text-area id="sendMessageId" value="{{sendMessage}}" placeholder="Enter a Message" label-edge="none" on-keyup="[[sendValueChanged]]">
+              <oj-text-area id="sendMessageId" value="{{sendMessage}}" placeholder="Enter a Message" label-edge="none"
+                on-keydown="[[sendValueChanged]]">
               </oj-text-area>
               <div>
+                <oj-popup id="emojiPop">
+                  <oj-bind-for-each data="[[emojiOptionArray]]">
+                    <template data-oj-as="row">
+                      <a on-click="[[emojiSelect]]">
+                        <oj-bind-text value="[[row.data]]"></oj-bind-text>
+                      </a>
+                    </template>
+                  </oj-bind-for-each>
+                </oj-popup>
+                <oj-button display="icons" chroming="borderless" on-oj-action="[[openEmojiPop]]">
+                  Smilies
+                  <span slot="startIcon" class="oj-ux-ico-emoji-smile"></span>
+                </oj-button>
                 <oj-button display="icons" chroming="borderless" on-oj-action="[[sendMessageAc]]">
                   <span slot="startIcon" class="oj-ux-ico-send"></span>
                   Send

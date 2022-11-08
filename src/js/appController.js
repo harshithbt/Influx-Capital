@@ -8,9 +8,9 @@
 /*
  * Your application specific code will go here
  */
-define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/firebase-config', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
+define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/firebase-config', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
   'ojs/ojdrawerpopup', 'ojs/ojmodule-element', 'ojs/ojknockout'],
-  function (ko, $, Context, cookie, fConfig, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1) {
+  function (ko, $, Context, cookie, fConfig, emoji, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1) {
 
     function ControllerViewModel(params) {
 
@@ -49,6 +49,8 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       this.firstSelectedItem = ko.observable();
       this.selectedUserName = ko.observable();
       this.scrollPos = ko.observable({ y: 10000 });
+      this.optionSelectedMessageId = ko.observable();
+      this.emojiOptionArray = ko.observableArray(emoji.emojis);
 
       this.getMessagesData = (type, sum, message) => {
         return [
@@ -262,8 +264,8 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
           }
           dbRef.push(message_data);
           this.sendMessage("");
-          var objDiv = document.getElementById("end-chat-refer");
-          objDiv.scrollTop = objDiv.scrollHeight;
+          // var objDiv = document.getElementById("end-chat-refer");
+          // objDiv.scrollTop = objDiv.scrollHeight;
         }
       }
 
@@ -283,6 +285,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         dbRef.on("value", (snapshot) => {
           if (snapshot.exists()) {
             var messages = [];
+            var lastId = "";
             var resp = snapshot.val();
             var result = Object.keys(resp).map((key) => [key, resp[key]]);
             result.forEach((user) => {
@@ -292,12 +295,13 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
                 sender: user[1].uid === this.uid() ? true : false,
                 time: user[1].time
               });
+              lastId = user[0];
             });
             this.usersMessagesArray(messages);
             this.messageArrayDataProvider(new ArrayDataProvider(this.usersMessagesArray(), { keyAttributes: "ID" }));
             this.userMessageSelected(friend);
-            var objDiv = document.getElementById("end-chat-refer");
-            objDiv.scrollTop = objDiv.scrollHeight;
+            // var objDiv = document.getElementById(lastId);
+            // objDiv.scrollTop = objDiv.scrollHeight;
           } else {
             this.userMessageSelected(friend);
           }
@@ -315,7 +319,54 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       }
 
       this.messageDeteleAC = () => {
-        alert("Under Construction !!!");
+        var idVal = event.currentTarget.id.split("~")[1];
+        this.optionSelectedMessageId(idVal);
+        var friend = this.getSelectedUidMessage(this.messageUserSelectedItems());
+        this.selectedUserName(this.firstSelectedItem().data.name || this.firstSelectedItem().data.email);
+        var userArry = [];
+        userArry.push(this.uid());
+        userArry.push(friend.split('"')[1]);
+        userArry.sort();
+        var messageId = "";
+        messageId = userArry.toString();
+        var database = firebase.database();
+        var database_ref = database.ref().child('messages/' + messageId);
+        database_ref.child(this.optionSelectedMessageId()).remove();
+      }
+
+      this.messageEditAC = () => {
+        var idVal = event.currentTarget.id.split("~")[1];
+        this.optionSelectedMessageId(idVal);
+        document.getElementById("mes~" + idVal).setAttribute("readonly", false);
+      }
+
+      this.messageEditACValueChanged = (event) => {
+        if (event.detail.updatedFrom === "internal") {
+          var friend = this.getSelectedUidMessage(this.messageUserSelectedItems());
+          this.selectedUserName(this.firstSelectedItem().data.name || this.firstSelectedItem().data.email);
+          var userArry = [];
+          userArry.push(this.uid());
+          userArry.push(friend.split('"')[1]);
+          userArry.sort();
+          var messageId = "";
+          messageId = userArry.toString();
+          var database = firebase.database();
+          var database_ref = database.ref().child('messages/' + messageId);
+          database_ref.child(this.optionSelectedMessageId() + '/message').set(event.detail.value);
+          document.getElementById("mes~" + this.optionSelectedMessageId()).setAttribute("readonly", true);
+        }
+      }
+
+      this.checkMsgOption = (id, time) => {
+        var now = new Date();
+        var messageTime = new Date(time);
+        var diffTime = now.getTime() - messageTime.getTime();
+        var diffMins = Math.floor(diffTime / 60000);
+        if (diffMins <= 5) {
+          return true;
+        } else {
+          return false;
+        }
       }
 
       this.handleSelectedChangedMessage = () => {
@@ -330,9 +381,22 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       }
 
       this.sendValueChanged = (event) => {
-        // if (event.keyCode === 13) {
+        // if (event.keyCode === 13 && !event.shiftKey) {
+        //   this.sendMessage(event.target.value);
         //   this.sendMessageAc();
+        //   document.getElementById("sendMessageId").value = "";
         // }
+
+      }
+
+      this.openEmojiPop = () => {
+        let popup = document.getElementById("emojiPop");
+        popup.open("#messade-page");
+      }
+
+      this.emojiSelect = (event) => {
+        var imoji = event.target.innerText.trim();
+        this.sendMessage(this.sendMessage()+imoji);
       }
 
       this.NavigateHome = () => {
