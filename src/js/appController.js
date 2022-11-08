@@ -8,9 +8,9 @@
 /*
  * Your application specific code will go here
  */
-define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/firebase-config', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
+define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/moment', 'firebasejs/firebase-config', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
   'ojs/ojdrawerpopup', 'ojs/ojmodule-element', 'ojs/ojknockout'],
-  function (ko, $, Context, cookie, fConfig, emoji, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1) {
+  function (ko, $, Context, cookie, moment, fConfig, emoji, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1) {
 
     function ControllerViewModel(params) {
 
@@ -311,10 +311,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
 
       this.messageTimeFormater = (d) => {
         var res = "";
-        var newD = new Date(d);
-        let text = newD.toString();
-        text = text.split(" ");
-        res = text[0] + " " + text[1] + " " + text[2] + " " + text[3] + " " + text[4];
+        res = moment(d).fromNow();
         return res;
       }
 
