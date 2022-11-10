@@ -8,7 +8,7 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils", "../firebasejs/cookie"],
+define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/firebase-auth"],
   function (ko, accUtils, cookie) {
     function HomeViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));
@@ -30,15 +30,15 @@ define(["knockout", "../accUtils", "../firebasejs/cookie"],
 
       this.getDetails = () => {
         var uid = cookie.getUserCookieArray()[5] || "";
-          var ddUserRole = firebase.database().ref("users/" + uid);
-          ddUserRole.on("value", (snapshot) => {
-            if (snapshot.exists()) {
-              var resp = snapshot.val();
-              this.userImage(resp.proPicUrl);
-              this.userRole(resp.role);
-              this.phoneNumber(resp.phone);
-            }
-          });
+        var ddUserRole = firebase.database().ref("users/" + uid);
+        ddUserRole.on("value", (snapshot) => {
+          if (snapshot.exists()) {
+            var resp = snapshot.val();
+            rvm.userImage(resp.proPicUrl);
+            rvm.userRole(resp.role);
+            rvm.phoneNumber(resp.phone);
+          }
+        });
       };
 
 
@@ -47,7 +47,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie"],
         document.title = "IC | Home";
         rvm.headerFooterCond("");
         rvm.hideLoader();
-        if (!rvm.isLogin()) {
+        if (!rvm.isLogin() && !rvm.getUID()) {
           params.router.go({ path: 'login' });
         } else if (!this.userRole()) {
           this.getDetails();

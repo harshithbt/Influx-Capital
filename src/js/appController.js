@@ -8,9 +8,9 @@
 /*
  * Your application specific code will go here
  */
-define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/moment', 'firebasejs/firebase-config', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
+define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/firebase-config', 'firebasejs/moment', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
   'ojs/ojdrawerpopup', 'ojs/ojmodule-element', 'ojs/ojknockout'],
-  function (ko, $, Context, cookie, moment, fConfig, emoji, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1) {
+  function (ko, $, Context, cookie, fConfig, moment, emoji, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1) {
 
     function ControllerViewModel(params) {
 
@@ -48,9 +48,11 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       this.userMessageSelected = ko.observableArray();
       this.firstSelectedItem = ko.observable();
       this.selectedUserName = ko.observable();
-      this.scrollPos = ko.observable({ y: 10000 });
       this.optionSelectedMessageId = ko.observable();
       this.emojiOptionArray = ko.observableArray(emoji.emojis);
+      this.scrollToKey = ko.observable("always");
+      this.scrollPos = ko.observable({ y: 10000 });
+
 
       this.getMessagesData = (type, sum, message) => {
         return [
@@ -68,7 +70,6 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       this.messagesDataprovider = new ArrayDataProvider(this.messagesInfo);
       // Initialize Firebase
       const firebaseapp = firebase.initializeApp(fConfig.firebaseConfig);
-
       announcementHandler = (event) => {
         this.message(event.detail.message);
         this.manner(event.detail.manner);
@@ -186,6 +187,11 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         }
       };
 
+
+      this.getUID = () => {
+        return firebase.auth().currentUser;
+      }
+
       this.callUsAction = () => {
         document.getElementById("call-us-dialog").open();
       }
@@ -246,6 +252,10 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         document.getElementById("help-dialog").close();
       }
 
+      this.icChatAction = () => {
+        document.getElementById("ic-chat-dialog").open();
+      }
+
       this.sendMessageAc = () => {
         if (this.sendMessage()) {
           var userArry = [];
@@ -300,6 +310,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
             this.usersMessagesArray(messages);
             this.messageArrayDataProvider(new ArrayDataProvider(this.usersMessagesArray(), { keyAttributes: "ID" }));
             this.userMessageSelected(friend);
+            this.scrollPos({ y: 20000 });
             // var objDiv = document.getElementById(lastId);
             // objDiv.scrollTop = objDiv.scrollHeight;
           } else {
@@ -378,12 +389,10 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       }
 
       this.sendValueChanged = (event) => {
-        // if (event.keyCode === 13 && !event.shiftKey) {
-        //   this.sendMessage(event.target.value);
-        //   this.sendMessageAc();
-        //   document.getElementById("sendMessageId").value = "";
-        // }
-
+        if (event.keyCode === 13 && !event.shiftKey) {
+          // this.sendMessage(event.target.value);
+          // document.getElementById('sendMessageBtn').click()
+        }
       }
 
       this.openEmojiPop = () => {
@@ -393,7 +402,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
 
       this.emojiSelect = (event) => {
         var imoji = event.target.innerText.trim();
-        this.sendMessage(this.sendMessage()+imoji);
+        this.sendMessage(this.sendMessage() + imoji);
       }
 
       this.NavigateHome = () => {
@@ -410,30 +419,28 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
 
       // Footer
       this.footerLinks = [
-        { name: "Contact Us", id: "contactUs", linkTarget: "http://www.oracle.com/us/corporate/contact/index.html" },
-        { name: "Legal Notices", id: "legalNotices", linkTarget: "http://www.oracle.com/us/legal/index.html" },
-        { name: "Terms Of Use", id: "termsOfUse", linkTarget: "http://www.oracle.com/us/legal/terms/index.html" },
-        { name: "Your Privacy Rights", id: "yourPrivacyRights", linkTarget: "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js" },
+        { name: "Facebook", id: "facebook", class:"oj-ux-ico-facebook", linkTarget: "https://www.facebook.com/profile.php?id=100087954540350" },
+        { name: "Twitter", id: "twitter", class:"oj-ux-ico-twitter", linkTarget: "https://twitter.com/influx_capital" },
+        { name: "Instagram", id: "instagram", class:"oj-ux-ico-instagram", linkTarget: "https://www.instagram.com/influxcapital/" },
+        { name: "LinkedIn", id: "linkedin", class:"oj-ux-ico-linkedin", linkTarget: "https://www.linkedin.com/in/influx-capital-a6875b256/" },
       ];
 
+
       this.init = () => {
-        try {
-          if (this.uid() && this.isLogin()) {
-            var ddUserRole = firebase.database().ref("users/" + this.uid());
-            ddUserRole.on("value", (snapshot) => {
-              if (snapshot.exists()) {
-                var resp = snapshot.val();
-                this.userImage(resp.proPicUrl);
-                this.userRole(resp.role);
-                this.phoneNumber(resp.phone);
-              }
-            });
-          } else {
+        if (this.uid() && this.isLogin() && this.getUID()) {
+          var ddUserRole = firebase.database().ref("users/" + this.uid());
+          ddUserRole.on("value", (snapshot) => {
+            if (snapshot.exists()) {
+              var resp = snapshot.val();
+              this.userImage(resp.proPicUrl);
+              this.userRole(resp.role);
+              this.phoneNumber(resp.phone);
+            }
+          }).catch(e => {
             router.go({ path: 'login' });
-          }
-        } catch (error) {
-          console.log("error", error);
-          // location.reload();
+          });
+        } else {
+          router.go({ path: 'login' });
         }
       };
       this.init();

@@ -29,7 +29,7 @@ define(["knockout", "../accUtils"],
         document.title = "IC | About";
         rvm.headerFooterCond("");
         rvm.hideLoader();
-        if (!rvm.isLogin()) {
+        if (!rvm.isLogin() && !rvm.getUID()) {
           params.router.go({path: 'login'});
       }
         // Implement further logic if needed

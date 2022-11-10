@@ -64,7 +64,7 @@ define(["knockout", "../accUtils", "../components/demo-card/loader"],
                 this.refreshUser();
                 rvm.headerFooterCond("");
                 rvm.hideLoader();
-                if (!rvm.isLogin()) {
+                if (!rvm.isLogin() && !rvm.getUID()) {
                     params.router.go({ path: 'login' });
                 }
             };

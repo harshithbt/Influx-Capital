@@ -98,7 +98,7 @@
               <span>Application Navigation</span>
             </oj-button>
           </div>
-          <oj-bind-if test="[[userEmail()]]">
+          <oj-bind-if test="[[appName()]]">
             <div class="oj-sm-align-items-baseline" data-bind="click:NavigateHome">
               <span role="img" class="demo-ic-icon" title="IC Logo" alt="IC Logo"></span>
             </div>
@@ -150,21 +150,21 @@
         config="[[moduleAdapter.koObservableConfig]]">
       </oj-module>
       <footer class="oj-web-applayout-footer" id="mainFooter" role="contentinfo">
-        <!-- <div class="oj-web-applayout-footer-item oj-web-applayout-max-width">
-          <ul>
-            <oj-bind-for-each data="[[footerLinks]]">
-              <template>
-                <li>
-                  <a :id="[[$current.data.linkId]]" :href="[[$current.data.linkTarget]]">
-                    <oj-bind-text value="[[$current.data.name]]"></oj-bind-text>
-                  </a>
-                </li>
-              </template>
-            </oj-bind-for-each>
-          </ul>
-        </div> -->
         <div
-          class="oj-web-applayout-footer-item oj-web-applayout-max-width oj-text-color-secondary oj-typography-body-sm">
+          class="oj-web-applayout-footer-item oj-web-applayout-max-width  oj-typography-body-sm oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
+          <oj-bind-for-each data="[[footerLinks]]">
+            <template>
+              <a :id="[[$current.data.linkId]]" :href="[[$current.data.linkTarget]]" target="_blank">
+                <oj-button display="icons" chroming="borderless" :title="[[$current.data.name]]">
+                  <span slot="startIcon" :class="[[$current.data.class]]"></span>
+                  <oj-bind-text value="[[$current.data.name]]"></oj-bind-text>
+                </oj-button>
+              </a>
+            </template>
+          </oj-bind-for-each>
+        </div>
+        <div
+          class="oj-web-applayout-footer-item oj-web-applayout-max-width oj-text-color-secondary oj-typography-body-sm oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
           Copyright © 2022 Influx Capital and/or its affiliates All rights reserved.
         </div>
       </footer>
@@ -191,6 +191,12 @@
               Message
             </oj-button>
           </li>
+          <li class="mp-sticky-item">
+            <oj-button display="icons" chroming="borderless" on-oj-action="[[icChatAction]]" title="IC Chat">
+              <span slot="startIcon" class="oj-ux-ico-wechat"></span>
+              IC Chat App
+            </oj-button>
+          </li>
         </ul>
         <oj-dialog id="call-us-dialog" dialog-title="Call Us" :class="[[smScreen() ? 'oj-sm-8' : 'oj-sm-4']]">
           <div slot="body">
@@ -199,6 +205,11 @@
           <div slot="footer">
             <oj-button id="okButton" on-oj-action="[[closeCallUs]]">OK
             </oj-button>
+          </div>
+        </oj-dialog>
+        <oj-dialog id="ic-chat-dialog" cancel-behavior="icon" resize-behavior="resizable">
+          <div slot="body">
+            <iframe src="https://influx-capital-chat.web.app/" title="IC Chat" class="ic-chat-iframe"></iframe>
           </div>
         </oj-dialog>
         <oj-dialog id="help-dialog" dialog-title="Help" :class="[[smScreen() ? 'oj-sm-8' : 'oj-sm-4']]">
@@ -252,7 +263,8 @@
               <div class="message-main-body-big oj-panel message-panel" id="messade-page">
                 <oj-list-view id="listviewMessage" class="oj-sm-padding-2x-bottom" data="[[messageArrayDataProvider]]"
                   selected="{{messageSelectedItems}}" on-selected-changed="[[handleSelectedChangedMessage]]"
-                  scroll-position="[[scrollPos]]" first-selected-item="{{firstSelectedItemMessage}}">
+                  first-selected-item="{{firstSelectedItemMessage}}" scroll-to-key="{{scrollToKey}}"
+                  scroll-position="{{scrollPos}}">
                   <template slot="itemTemplate" data-oj-as="item">
                     <oj-bind-if test="[[!item.data.sender]]">
                       <div class="oj-flex oj-sm-flex-items-initial oj-sm-margin-2x-bottom left" :id="[[item.data.ID]]">
@@ -319,10 +331,10 @@
                   </oj-bind-for-each>
                 </oj-popup>
                 <oj-button display="icons" chroming="borderless" on-oj-action="[[openEmojiPop]]">
-                  Smilies
+                  Emojis
                   <span slot="startIcon" class="oj-ux-ico-emoji-smile"></span>
                 </oj-button>
-                <oj-button display="icons" chroming="borderless" on-oj-action="[[sendMessageAc]]">
+                <oj-button display="icons" chroming="borderless" on-oj-action="[[sendMessageAc]]" id="sendMessageBtn">
                   <span slot="startIcon" class="oj-ux-ico-send"></span>
                   Send
                 </oj-button>
@@ -337,6 +349,16 @@
   <!-- This injects script tags for the main javascript files -->
   <!-- injector:scripts -->
   <!-- endinjector -->
+  <!-- <script type="text/javascript">
+    // fetch('https://ipinfo.io')
+    function getIPAddress() {
+      var ipAddress;
+      $.get("http://ipinfo.io", function (response) {
+        console.log(response);
+      }, "jsonp");
+    }
+    getIPAddress();
+  </script> -->
 
 </body>
 

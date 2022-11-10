@@ -171,7 +171,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                 document.title = "IC | Login";
                 rvm.headerFooterCond("login");
                 rvm.hideLoader();
-                if (rvm.isLogin()) {
+                if (rvm.isLogin() && rvm.getUID()) {
                     params.router.go({ path: 'home' });
                 }
             };

@@ -15,7 +15,7 @@
             <oj-validation-group id="trackerLogin" role="group">
                 <oj-form-layout direction="row" max-columns="1">
                     <oj-input-text label-hint="Email" value="{{emailAddress}}" validators="[[emailPatternValidator]]" required></oj-input-text>
-                    <oj-input-password label-hint="Password" value="{{password}}" mask-icon="visible" required></oj-input-password>
+                    <oj-input-password label-hint="Password" value="{{password}}" mask-icon="visible" required onkeydown="if (event.keyCode == 13) document.getElementById('LoginToggleButton').click()"></oj-input-password>
                 </oj-form-layout>
             </oj-validation-group>
         </div>
@@ -28,7 +28,7 @@
             <span slot="startIcon" class="oj-ux-ico-google"></span>
             SignIn With Google
         </oj-button> -->
-        <oj-button id="LoginToggleButton" class="oj-button-lg oj-sm-padding-4x-horizontal"
+        <oj-button id="SignUpToggleButton" class="oj-button-lg oj-sm-padding-4x-horizontal"
             on-oj-action="[[signUpButton]]" chroming="callToAction" display="icons">SignUp
         </oj-button>
     </div>

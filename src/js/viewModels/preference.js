@@ -204,7 +204,7 @@ define(["knockout", "../accUtils", "ojs/ojarraydataprovider", "ojs/ojavatar", "o
         rvm.headerFooterCond("");
         this.getCurrentUser();
         rvm.hideLoader();
-        if (!rvm.isLogin()) {
+        if (!rvm.isLogin() && !rvm.getUID()) {
           params.router.go({ path: 'login' });
         }
       };

@@ -289,7 +289,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
                 document.title = "IC | Admin";
                 rvm.headerFooterCond("");
                 rvm.hideLoader();
-                if (!rvm.isLogin()) {
+                if (!rvm.isLogin() && !rvm.getUID()) {
                     params.router.go({ path: 'login' });
                 }
                 if (this.userRole() !== 'new') {
