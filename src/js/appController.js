@@ -8,9 +8,9 @@
 /*
  * Your application specific code will go here
  */
-define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/firebase-config', 'firebasejs/moment', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
+define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/firebase-config', 'firebasejs/moment', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojfilepickerutils", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "ojs/ojfilepicker", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
   'ojs/ojdrawerpopup', 'ojs/ojmodule-element', 'ojs/ojknockout'],
-  function (ko, $, Context, cookie, fConfig, moment, emoji, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1) {
+  function (ko, $, Context, cookie, fConfig, moment, emoji, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1, FilePickerUtils) {
 
     function ControllerViewModel(params) {
 
@@ -52,6 +52,8 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       this.emojiOptionArray = ko.observableArray(emoji.emojis);
       this.scrollToKey = ko.observable("always");
       this.scrollPos = ko.observable({ y: 10000 });
+      this.messageFileNames = ko.observable();
+
 
 
       this.getMessagesData = (type, sum, message) => {
@@ -201,6 +203,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       }
 
       this.messageAction = (event) => {
+        console.log(event.target.id);
         const dbRef = firebase.database().ref("users");
         dbRef.on("value", (snapshot) => {
           if (snapshot.exists()) {
@@ -217,12 +220,16 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
                   name: user[1].name,
                   title: user[1].title,
                   image: user[1].proPicUrl,
-                  email: user[1].email
+                  email: user[1].email,
+                  last_login: user[1].last_login,
+                  last_logout: user[1].last_logout
                 });
               }
             });
             this.messageUserDataProvider(new ArrayDataProvider(this.messageUser(), { keyAttributes: "uid" }));
-            document.getElementById("message-dialog").open();
+            if(event.target.id){
+              document.getElementById("message-dialog").open();
+            }
           } else {
             rvm.messagesInfo(rvm.getMessagesData("error", "Error", "No data available"));
           }
@@ -270,6 +277,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
           var message_data = {
             uid: this.uid(),
             message: this.sendMessage(),
+            messageType: "text",
             time: ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date())
           }
           dbRef.push(message_data);
@@ -303,6 +311,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
                 ID: user[0],
                 message: user[1].message,
                 sender: user[1].uid === this.uid() ? true : false,
+                messageType: user[1].messageType,
                 time: user[1].time
               });
               lastId = user[0];
@@ -377,6 +386,18 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         }
       }
 
+      this.checkLastDateGreater = (lnTime, loTime) => {
+        var logedIn = new Date(lnTime);
+        var logedOut = new Date(loTime);
+        var diffTime = logedIn.getTime() - logedOut.getTime();
+        var diffMins = Math.floor(diffTime / 60000);
+        if (diffMins > 0) {
+          return "Online";
+        } else {
+          return "Last Seen "+moment(logedOut).fromNow();
+        }
+      }
+
       this.handleSelectedChangedMessage = () => {
         var message = this.getSelectedUidMessageforDelete(this.messageSelectedItems());
         message = message.split('"')[1];
@@ -409,6 +430,20 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         router.go({ path: 'home' });
       }
 
+      this.messageSelectListener = (files) => {
+        this.messageFileNames(Array.prototype.map.call(files, (file) => {
+          return file.name;
+        }));
+      };
+
+      this.messageSelectFiles = (event) => {
+        FilePickerUtils.pickFiles(this.selectListener, {
+          accept: [],
+          capture: "none",
+          selectionMode: "single",
+        });
+      };
+
 
 
       // Header
@@ -419,10 +454,10 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
 
       // Footer
       this.footerLinks = [
-        { name: "Facebook", id: "facebook", class:"oj-ux-ico-facebook", linkTarget: "https://www.facebook.com/profile.php?id=100087954540350" },
-        { name: "Twitter", id: "twitter", class:"oj-ux-ico-twitter", linkTarget: "https://twitter.com/influx_capital" },
-        { name: "Instagram", id: "instagram", class:"oj-ux-ico-instagram", linkTarget: "https://www.instagram.com/influxcapital/" },
-        { name: "LinkedIn", id: "linkedin", class:"oj-ux-ico-linkedin", linkTarget: "https://www.linkedin.com/in/influx-capital-a6875b256/" },
+        { name: "Facebook", id: "facebook", class: "oj-ux-ico-facebook", linkTarget: "https://www.facebook.com/profile.php?id=100087954540350" },
+        { name: "Twitter", id: "twitter", class: "oj-ux-ico-twitter", linkTarget: "https://twitter.com/influx_capital" },
+        { name: "Instagram", id: "instagram", class: "oj-ux-ico-instagram", linkTarget: "https://www.instagram.com/influxcapital/" },
+        { name: "LinkedIn", id: "linkedin", class: "oj-ux-ico-linkedin", linkTarget: "https://www.linkedin.com/in/influx-capital-a6875b256/" },
       ];
 
 

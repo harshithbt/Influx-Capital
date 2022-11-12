@@ -186,7 +186,7 @@
             </oj-button>
           </li>
           <li class="mp-sticky-item">
-            <oj-button display="icons" chroming="borderless" on-oj-action="[[messageAction]]" title="Message">
+            <oj-button display="icons" id="messageAcBtn" chroming="borderless" on-oj-action="[[messageAction]]" title="Message">
               <span slot="startIcon" class="oj-ux-ico-message"></span>
               Message
             </oj-button>
@@ -244,6 +244,9 @@
                         initials="[[item.data.name.charAt(0) || item.data.email.charAt(0)]]"></oj-avatar>
                       <span slot="secondary" class="oj-typography-body-sm oj-text-color-secondary">
                         <oj-bind-text value="[[item.data.title]]"></oj-bind-text>
+                      </span>
+                      <span slot="secondary" class="oj-typography-body-sm oj-text-color-success">
+                        <oj-bind-text value="[[checkLastDateGreater(item.data.last_login, item.data.last_logout)]]"></oj-bind-text>
                       </span>
                     </oj-list-item-layout>
                   </template>
@@ -318,22 +321,11 @@
           <div slot="footer" class="oj-sm-align-items-center">
             <oj-bind-if test="[[userMessageSelected().length > 0]]">
               <oj-text-area id="sendMessageId" value="{{sendMessage}}" placeholder="Enter a Message" label-edge="none"
-                on-keydown="[[sendValueChanged]]">
+                on-keydown="[[sendValueChanged]]" max-rows="0" rows="1">
+                <span slot="startIcon" class="oj-ux-ico-emoji-smile" style="float: left;" data-bind="click:openEmojiPop"></span>
+                <span slot="startIcon" class="oj-ux-ico-attach-file" style="float: left;" data-bind="click:messageSelectFiles"></span>
               </oj-text-area>
               <div>
-                <oj-popup id="emojiPop">
-                  <oj-bind-for-each data="[[emojiOptionArray]]">
-                    <template data-oj-as="row">
-                      <a on-click="[[emojiSelect]]">
-                        <oj-bind-text value="[[row.data]]"></oj-bind-text>
-                      </a>
-                    </template>
-                  </oj-bind-for-each>
-                </oj-popup>
-                <oj-button display="icons" chroming="borderless" on-oj-action="[[openEmojiPop]]">
-                  Emojis
-                  <span slot="startIcon" class="oj-ux-ico-emoji-smile"></span>
-                </oj-button>
                 <oj-button display="icons" chroming="borderless" on-oj-action="[[sendMessageAc]]" id="sendMessageBtn">
                   <span slot="startIcon" class="oj-ux-ico-send"></span>
                   Send
@@ -342,6 +334,15 @@
             </oj-bind-if>
           </div>
         </oj-dialog>
+        <oj-popup id="emojiPop">
+          <oj-bind-for-each data="[[emojiOptionArray]]">
+            <template data-oj-as="row">
+              <a on-click="[[emojiSelect]]">
+                <oj-bind-text value="[[row.data]]"></oj-bind-text>
+              </a>
+            </template>
+          </oj-bind-for-each>
+        </oj-popup>
       </div>
     </div>
   </div>

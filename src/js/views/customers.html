@@ -12,21 +12,21 @@
           <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Filter" label-edge="inside"
             placeholder="Type to filter" on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}"
             clear-icon="always"></oj-input-text>
+        </div>
+        <div class="oj-flex-item">
+          <div class="oj-flex oj-sm-justify-content-flex-end">
             <oj-button display="icons" chroming="callToAction" on-oj-action="[[exportCustomer]]">
               <span slot="startIcon" class="oj-ux-ico-file-csv-shortcut"></span>
               Export Customer
             </oj-button>
-        </div>
-        <oj-bind-if test="[[userRole() === 'superadmin' || userRole() === 'admin']]">
-          <div class="oj-flex-item">
-            <div class="oj-flex oj-sm-justify-content-flex-end">
-              <oj-button display="icons" chroming="callToAction" on-oj-action="[[addNewCustomer]]">
+            <oj-bind-if test="[[userRole() === 'superadmin' || userRole() === 'admin']]">
+              <oj-button display="icons" chroming="callToAction" on-oj-action="[[addNewCustomer]]" class="oj-sm-padding-2x-start">
                 <span slot="startIcon" class="oj-ux-ico-add-row"></span>
                 Add New Customer
               </oj-button>
-            </div>
+            </oj-bind-if>
           </div>
-        </oj-bind-if>
+        </div>
       </div>
       <div class="oj-flex">
         <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" display="grid"
