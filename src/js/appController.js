@@ -8,7 +8,7 @@
 /*
  * Your application specific code will go here
  */
-define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/firebase-config', 'firebasejs/moment', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojfilepickerutils", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "ojs/ojfilepicker", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
+define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/firebase-config', 'firebasejs/moment', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojfilepickerutils", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "ojs/ojfilepicker", "ojs/ojswitch", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
   'ojs/ojdrawerpopup', 'ojs/ojmodule-element', 'ojs/ojknockout'],
   function (ko, $, Context, cookie, fConfig, moment, emoji, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1, FilePickerUtils) {
 
@@ -53,6 +53,23 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       this.scrollToKey = ko.observable("always");
       this.scrollPos = ko.observable({ y: 10000 });
       this.messageFileNames = ko.observable();
+      this.isContrastBackground = ko.observable(false);
+      this.friendUID = ko.observable();
+      this.selectedMessageId = ko.observable();
+      this.friendTypingValue = ko.observable();
+
+      this.isContrastBackground.subscribe(function (newValue) {
+        let darkContainer = document.getElementById("ic-main-container");
+        if (darkContainer != null) {
+          if (newValue) {
+            darkContainer.className =
+              "oj-web-applayout-body oj-bg-neutral-170 oj-color-invert";
+          }
+          else {
+            darkContainer.className = "oj-web-applayout-body";
+          }
+        }
+      });
 
 
 
@@ -153,6 +170,11 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         });
       }
 
+      this.stayLoggedIn = () => {
+        resetTimer();
+        document.getElementById("timeOutWarning").close();
+      }
+
       this.menuActionAC = (event) => {
         if (event.detail.selectedValue === "out") {
           this.logoutButton();
@@ -203,7 +225,6 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       }
 
       this.messageAction = (event) => {
-        console.log(event.target.id);
         const dbRef = firebase.database().ref("users");
         dbRef.on("value", (snapshot) => {
           if (snapshot.exists()) {
@@ -227,13 +248,11 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
               }
             });
             this.messageUserDataProvider(new ArrayDataProvider(this.messageUser(), { keyAttributes: "uid" }));
-            if(event.target.id){
-              document.getElementById("message-dialog").open();
-            }
           } else {
             rvm.messagesInfo(rvm.getMessagesData("error", "Error", "No data available"));
           }
         });
+        document.getElementById("message-dialog").open();
       }
 
       this.getSelectedUidMessage = (set) => {
@@ -292,18 +311,20 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         this.usersMessagesArray([]);
         var friend = this.getSelectedUidMessage(this.messageUserSelectedItems());
         this.selectedUserName(this.firstSelectedItem().data.name || this.firstSelectedItem().data.email);
+        this.friendUID(friend.split('"')[1]);
         var userArry = [];
         userArry.push(this.uid());
         userArry.push(friend.split('"')[1]);
         userArry.sort();
         var messageId = "";
         messageId = userArry.toString();
+        this.selectedMessageId(messageId);
+        this.friendTyping();
 
         const dbRef = firebase.database().ref().child('messages/' + messageId);
         dbRef.on("value", (snapshot) => {
           if (snapshot.exists()) {
             var messages = [];
-            var lastId = "";
             var resp = snapshot.val();
             var result = Object.keys(resp).map((key) => [key, resp[key]]);
             result.forEach((user) => {
@@ -314,14 +335,11 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
                 messageType: user[1].messageType,
                 time: user[1].time
               });
-              lastId = user[0];
             });
             this.usersMessagesArray(messages);
             this.messageArrayDataProvider(new ArrayDataProvider(this.usersMessagesArray(), { keyAttributes: "ID" }));
             this.userMessageSelected(friend);
             this.scrollPos({ y: 20000 });
-            // var objDiv = document.getElementById(lastId);
-            // objDiv.scrollTop = objDiv.scrollHeight;
           } else {
             this.userMessageSelected(friend);
           }
@@ -394,7 +412,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         if (diffMins > 0) {
           return "Online";
         } else {
-          return "Last Seen "+moment(logedOut).fromNow();
+          return "Last Seen " + moment(logedOut).fromNow();
         }
       }
 
@@ -410,9 +428,39 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       }
 
       this.sendValueChanged = (event) => {
-        if (event.keyCode === 13 && !event.shiftKey) {
-          // this.sendMessage(event.target.value);
-          // document.getElementById('sendMessageBtn').click()
+        const dbRef = firebase.database().ref().child('mevent/' + this.selectedMessageId());
+        var database = firebase.database();
+        var database_ref = database.ref();
+        if (event.type === "keydown") {
+          var typeData = {
+            [this.uid()] : "Typing...",
+            [this.friendUID()] : ""
+          }
+          dbRef.set(typeData);
+        } else if (event.type === "valueChanged" && event.detail.updatedFrom === "internal") {
+          var typeData = {
+            [this.uid()] : "",
+            [this.friendUID()] : ""
+          }
+          dbRef.set(typeData);
+        }
+      }
+
+      this.friendTyping = () => {
+        const dbRef = firebase.database().ref().child('mevent/' + this.selectedMessageId()+'/'+this.friendUID());
+        dbRef.on("value", (snapshot) => {
+          if (snapshot.exists()) {
+            var resp = snapshot.val();
+            this.friendTypingValue(resp);
+          }
+        });
+      }
+
+      this.themeChangedAC = (event) => {
+        if (event.detail.updatedFrom === "internal") {
+          var database = firebase.database();
+          var database_ref = database.ref();
+          database_ref.child('users/' + this.uid() + '/darkTheme').set(event.detail.value);
         }
       }
 
@@ -444,7 +492,10 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         });
       };
 
-
+      this.navToPref = () => {
+        document.getElementById("naviGatePref").close();
+        router.go({ path: 'preference' });
+      }
 
       // Header
       // Application Name used in Branding Area
@@ -458,6 +509,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         { name: "Twitter", id: "twitter", class: "oj-ux-ico-twitter", linkTarget: "https://twitter.com/influx_capital" },
         { name: "Instagram", id: "instagram", class: "oj-ux-ico-instagram", linkTarget: "https://www.instagram.com/influxcapital/" },
         { name: "LinkedIn", id: "linkedin", class: "oj-ux-ico-linkedin", linkTarget: "https://www.linkedin.com/in/influx-capital-a6875b256/" },
+        { name: "YouTube", id: "youtube", class: "oj-ux-ico-youtube", linkTarget: "https://www.youtube.com/channel/UCFgwsdEXI5MlkT2Pwo6kc4Q" },
       ];
 
 
@@ -470,6 +522,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
               this.userImage(resp.proPicUrl);
               this.userRole(resp.role);
               this.phoneNumber(resp.phone);
+              this.isContrastBackground(resp.darkTheme);
             }
           }).catch(e => {
             router.go({ path: 'login' });

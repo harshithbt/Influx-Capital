@@ -16,6 +16,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/fireba
       this.userRole = rvm.userRole;
       this.userImage = rvm.userImage;
       this.phoneNumber = rvm.phoneNumber;
+      this.isContrastBackground = rvm.isContrastBackground;
       // Below are a set of the ViewModel methods invoked by the oj-module component.
       // Please reference the oj-module jsDoc for additional information.
 
@@ -37,6 +38,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/fireba
             rvm.userImage(resp.proPicUrl);
             rvm.userRole(resp.role);
             rvm.phoneNumber(resp.phone);
+            rvm.isContrastBackground(resp.darkTheme);
           }
         });
       };
@@ -51,6 +53,9 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/fireba
           params.router.go({ path: 'login' });
         } else if (!this.userRole()) {
           this.getDetails();
+        }
+        if (firebase.auth().currentUser && !firebase.auth().currentUser.displayName) {
+          document.getElementById("naviGatePref").open();
         }
       };
 

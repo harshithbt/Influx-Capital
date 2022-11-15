@@ -8,8 +8,8 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils", "ojs/ojarraydataprovider", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojfilepicker", "ojs/ojprogress-bar", "../firebasejs/firebase-app", "../firebasejs/firebase-auth", "../firebasejs/firebase-storage"],
-  function (ko, accUtils, ArrayDataProvider) {
+define(["knockout", "../accUtils", "../firebasejs/cookie", "ojs/ojarraydataprovider", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojfilepicker", "ojs/ojprogress-bar", "../firebasejs/firebase-app", "../firebasejs/firebase-auth", "../firebasejs/firebase-storage"],
+  function (ko, accUtils, cookie, ArrayDataProvider) {
     function PreferenceViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));
       this.emailAddress = rvm.userEmail;
@@ -25,6 +25,7 @@ define(["knockout", "../accUtils", "ojs/ojarraydataprovider", "ojs/ojavatar", "o
       this.uploadEvent = ko.observable();
       this.progressValue = ko.observable(0);
       this.invalidMessage = ko.observable("");
+      this.isContrastBackground = rvm.isContrastBackground;
 
       // Below are a set of the ViewModel methods invoked by the oj-module component.
       // Please reference the oj-module jsDoc for additional information.
@@ -147,6 +148,7 @@ define(["knockout", "../accUtils", "ojs/ojarraydataprovider", "ojs/ojavatar", "o
         const files = event.detail.files;
         var file = files[0];
         this.fileName(file.name);
+        this.invalidMessage("");
       };
 
       this.invalidListener = (event) => {
@@ -198,6 +200,20 @@ define(["knockout", "../accUtils", "ojs/ojarraydataprovider", "ojs/ojavatar", "o
         }
       };
 
+      this.getDetails = () => {
+        var uid = cookie.getUserCookieArray()[5] || "";
+        var ddUserRole = firebase.database().ref("users/" + uid);
+        ddUserRole.on("value", (snapshot) => {
+          if (snapshot.exists()) {
+            var resp = snapshot.val();
+            rvm.userImage(resp.proPicUrl);
+            rvm.userRole(resp.role);
+            rvm.phoneNumber(resp.phone);
+            rvm.isContrastBackground(resp.darkTheme);
+          }
+        });
+      };
+
       this.connected = () => {
         accUtils.announce('Preference page loaded.', 'assertive');
         document.title = "IC | Preference";
@@ -206,6 +222,8 @@ define(["knockout", "../accUtils", "ojs/ojarraydataprovider", "ojs/ojavatar", "o
         rvm.hideLoader();
         if (!rvm.isLogin() && !rvm.getUID()) {
           params.router.go({ path: 'login' });
+        } else if (!this.userRole()) {
+          this.getDetails();
         }
       };
 

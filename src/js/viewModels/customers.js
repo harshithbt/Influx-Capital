@@ -13,8 +13,6 @@ define(["../accUtils", "../services", "../firebasejs/icutility", "require", "exp
   function (accUtils, services, icutility,  require, exports, ko, ojbootstrap_1, ArrayDataProvider, ListDataProviderView, ojdataprovider_1, ojconverterutils_i18n_1) {
     function CustomerViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));
-
-      this.serviceURL = "https://influx-capital-default-rtdb.firebaseio.com/ICDB.json";
       this.baseCustArray = ko.observable();
       this.customerArray = ko.observableArray();
       this.SL_NO = ko.observable();
@@ -28,6 +26,7 @@ define(["../accUtils", "../services", "../firebasejs/icutility", "require", "exp
       this.CREATED_ON = ko.observable();
       this.isLogin = rvm.isLogin;
       this.userRole = rvm.userRole;
+      this.isContrastBackground = rvm.isContrastBackground;
 
       this.CONSTITUTIONARRAY = ko.observableArray();
       this.dataProviderCONSTITUTION = new ArrayDataProvider(this.CONSTITUTIONARRAY, {
@@ -295,7 +294,6 @@ define(["../accUtils", "../services", "../firebasejs/icutility", "require", "exp
     };
 
     this.exportCustomer = () => {
-      console.log("cust",this.customerArray());
       var exportData = [];
       this.customerArray().forEach((cust) => {
         exportData.push({

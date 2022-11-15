@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="oj-flex">
-            <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" display="grid"
+            <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" display="grid" :class="[[isContrastBackground() ? 'ic-table-dark' : 'ic-table-light']]"
                 style="max-height: 500px;" data="[[dataprovider]]" scroll-policy="loadMoreOnScroll"
                 columns-default.sortable="enabled" scroll-policy-options='{"fetchSize": 10}'
                 columns-default.resizable="enabled" columns="{{columnArray}}" class="demo-table-container">

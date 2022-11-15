@@ -115,7 +115,8 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                                 name: "",
                                 title: "",
                                 last_login: ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date()),
-                                last_logout: ""
+                                last_logout: "",
+                                darkTheme: false
                             }
                             database_ref.child('users/' + userCredential.uid).set(user_data);
                             this.emailAddress("");

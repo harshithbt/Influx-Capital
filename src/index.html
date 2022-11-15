@@ -47,7 +47,7 @@
 
 </head>
 
-<body class="oj-web-applayout-body">
+<body class="oj-web-applayout-body" id="ic-main-container">
   <!-- Template for rendering navigation items shared between nav bar and nav list -->
   <script type="text/html" id="navTemplate">
       <li><a href="#">
@@ -88,7 +88,8 @@
            ** on the JET website for more information on how to use this pattern.
         -->
       <!-- <oj-bind-if test="[[!isLogin()]]"> -->
-      <header role="banner" class="oj-web-applayout-header" id="mainHeader">
+      <header role="banner" class="oj-web-applayout-header" id="mainHeader"
+        :class="[[isContrastBackground() ? 'ic-header-dark' : 'ic-header-white']]">
         <div class="oj-web-applayout-max-width oj-flex-bar oj-sm-align-items-center">
           <!-- Drawer toggle button -->
           <div class="oj-flex-bar-start oj-md-hide">
@@ -113,6 +114,12 @@
             </oj-bind-if> -->
             <!-- Responsive Toolbar -->
             <oj-toolbar>
+              <oj-switch label-edge="none" id="contrastBgSwitch" value="{{isContrastBackground}}"
+                on-value-changed="[[themeChangedAC]]">
+              </oj-switch>
+              <span class="oj-typography-subheading-xs">
+                <oj-bind-text value="[[isContrastBackground() ? 'Dark' : 'Light']]"></oj-bind-text>
+              </span>
               <oj-menu-button id="userMenu" display="[[smScreen() ? 'icons' : 'all']]" chroming="borderless">
                 <span>
                   <oj-bind-text value="[[userEmail]]"></oj-bind-text>
@@ -147,9 +154,11 @@
         "at": {"vertical": "top", "horizontal": "center"},
         "of": "window"}'></oj-messages>
       <oj-module role="main" class="oj-web-applayout-max-width oj-web-applayout-content ic-main-page-bg"
+        :class="[[isContrastBackground() ? 'ic-main-page-bg-dark' : 'ic-main-page-bg-white']]"
         config="[[moduleAdapter.koObservableConfig]]">
       </oj-module>
-      <footer class="oj-web-applayout-footer" id="mainFooter" role="contentinfo">
+      <footer class="oj-web-applayout-footer" id="mainFooter" role="contentinfo"
+        :class="[[isContrastBackground() ? 'ic-footer-dark' : 'ic-footer-white']]">
         <div
           class="oj-web-applayout-footer-item oj-web-applayout-max-width  oj-typography-body-sm oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
           <oj-bind-for-each data="[[footerLinks]]">
@@ -167,11 +176,13 @@
           class="oj-web-applayout-footer-item oj-web-applayout-max-width oj-text-color-secondary oj-typography-body-sm oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
           Copyright © 2022 Influx Capital and/or its affiliates All rights reserved.
         </div>
+        <oj-button id="autoLogout" style="display: none;" on-oj-action="[[logoutButton]]"></oj-button>
       </footer>
       <div id="page-loader" class="loading">
         <oj-progress-circle size="[[smScreen() ? 'sm' : 'md']]" value="-1"></oj-progress-circle>
       </div>
-      <div class="mp-sticky-container" id="icSideIcons">
+      <div class="mp-sticky-container"
+        :class="[[isContrastBackground() ? 'mp-sticky-container-dark' : 'mp-sticky-container-light']]" id="icSideIcons">
         <ul class="mp-sticky">
           <li class="mp-sticky-item">
             <oj-button display="icons" chroming="borderless" on-oj-action="[[callUsAction]]" title="Call Us">
@@ -186,7 +197,8 @@
             </oj-button>
           </li>
           <li class="mp-sticky-item">
-            <oj-button display="icons" id="messageAcBtn" chroming="borderless" on-oj-action="[[messageAction]]" title="Message">
+            <oj-button display="icons" id="messageAcBtn" chroming="borderless" on-oj-action="[[messageAction]]"
+              title="Message">
               <span slot="startIcon" class="oj-ux-ico-message"></span>
               Message
             </oj-button>
@@ -246,7 +258,8 @@
                         <oj-bind-text value="[[item.data.title]]"></oj-bind-text>
                       </span>
                       <span slot="secondary" class="oj-typography-body-sm oj-text-color-success">
-                        <oj-bind-text value="[[checkLastDateGreater(item.data.last_login, item.data.last_logout)]]"></oj-bind-text>
+                        <oj-bind-text value="[[checkLastDateGreater(item.data.last_login, item.data.last_logout)]]">
+                        </oj-bind-text>
                       </span>
                     </oj-list-item-layout>
                   </template>
@@ -260,6 +273,9 @@
                   back
                 </oj-button>
                 <div class="oj-flex oj-sm-align-items-center">
+                  <span class="ic-span-type">
+                    <oj-bind-text value="[[friendTypingValue]]"></oj-bind-text>
+                  </span>
                   <oj-bind-text value="[[selectedUserName]]"></oj-bind-text>
                 </div>
               </div>
@@ -321,9 +337,11 @@
           <div slot="footer" class="oj-sm-align-items-center">
             <oj-bind-if test="[[userMessageSelected().length > 0]]">
               <oj-text-area id="sendMessageId" value="{{sendMessage}}" placeholder="Enter a Message" label-edge="none"
-                on-keydown="[[sendValueChanged]]" max-rows="0" rows="1">
-                <span slot="startIcon" class="oj-ux-ico-emoji-smile" style="float: left;" data-bind="click:openEmojiPop"></span>
-                <span slot="startIcon" class="oj-ux-ico-attach-file" style="float: left;" data-bind="click:messageSelectFiles"></span>
+                on-keydown="[[sendValueChanged]]" on-value-changed="[[sendValueChanged]]" max-rows="0" rows="1">
+                <span slot="startIcon" class="oj-ux-ico-emoji-smile" style="float: left;"
+                  data-bind="click:openEmojiPop"></span>
+                <!-- <span slot="startIcon" class="oj-ux-ico-attach-file" style="float: left;"
+                  data-bind="click:messageSelectFiles"></span> -->
               </oj-text-area>
               <div>
                 <oj-button display="icons" chroming="borderless" on-oj-action="[[sendMessageAc]]" id="sendMessageBtn">
@@ -332,6 +350,22 @@
                 </oj-button>
               </div>
             </oj-bind-if>
+          </div>
+        </oj-dialog>
+        <oj-dialog id="naviGatePref" dialog-title="Update Prference" aria-describedby="desc">
+          <div slot="body">
+            <span>Please Update the User Name and Phone number(Optional).</span>
+          </div>
+          <div slot="footer">
+            <oj-button id="navButton" chroming="callToAction" on-oj-action="[[navToPref]]">OK</oj-button>
+          </div>
+        </oj-dialog>
+        <oj-dialog id="timeOutWarning" dialog-title="Timeout" aria-describedby="desc" cancel-behavior="icon">
+          <div slot="body">
+            <span>Session timeout, Stay Logged In?</span>
+          </div>
+          <div slot="footer">
+            <oj-button id="navButton" chroming="callToAction" on-oj-action="[[stayLoggedIn]]">OK</oj-button>
           </div>
         </oj-dialog>
         <oj-popup id="emojiPop">
@@ -350,16 +384,44 @@
   <!-- This injects script tags for the main javascript files -->
   <!-- injector:scripts -->
   <!-- endinjector -->
-  <!-- <script type="text/javascript">
-    // fetch('https://ipinfo.io')
-    function getIPAddress() {
-      var ipAddress;
-      $.get("http://ipinfo.io", function (response) {
-        console.log(response);
-      }, "jsonp");
+  <script>
+    var warningTimeout = 840000;
+    var timoutNow = 60000;
+    var warningTimerID, timeoutTimerID;
+
+    function startTimer() {
+      // window.setTimeout returns an Id that can be used to start and stop a timer
+      warningTimerID = window.setTimeout(warningInactive, warningTimeout);
     }
-    getIPAddress();
-  </script> -->
+
+    function warningInactive() {
+      window.clearTimeout(warningTimerID);
+      timeoutTimerID = window.setTimeout(IdleTimeout, timoutNow);
+      document.getElementById("timeOutWarning").open();
+    }
+
+    function resetTimer() {
+      window.clearTimeout(timeoutTimerID);
+      window.clearTimeout(warningTimerID);
+      startTimer();
+    }
+
+    // Logout the user.
+    function IdleTimeout() {
+      document.getElementById("timeOutWarning").close();
+      document.getElementById("autoLogout").click();
+    }
+
+    function setupTimers() {
+      document.addEventListener("mousemove", resetTimer, false);
+      document.addEventListener("mousedown", resetTimer, false);
+      document.addEventListener("keypress", resetTimer, false);
+      document.addEventListener("touchmove", resetTimer, false);
+      document.addEventListener("onscroll", resetTimer, false);
+      startTimer();
+    }
+    setupTimers();
+  </script>
 
 </body>
 

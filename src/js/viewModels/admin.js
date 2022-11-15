@@ -29,6 +29,7 @@ define(["../accUtils", "../services", "require", "exports", "knockout", "ojs/ojb
             this.userRole = rvm.userRole;
             this.smScreen = rvm.smScreen;
             this.loggedUserUid = rvm.uid;
+            this.isContrastBackground = rvm.isContrastBackground;
 
             this.ROLEARRAY = ko.observableArray();
             this.dataProviderRole = new ArrayDataProvider(this.ROLEARRAY, {
