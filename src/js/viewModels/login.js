@@ -49,6 +49,14 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                             this.emailAddress("");
                             this.password("");
                             cookie.createUserCookie(user.email, disName, icUtils.generateRandomString(), ojconverterutils_i18n_1.IntlConverterUtils.getInitials(disName), userCredential.uid);
+                            const userData = {
+                                userName: user.displayName || "",
+                                profile_picture: user.photoURL || "",
+                                fullName: user.displayName || "",
+                                email: user.email || "",
+                                uid: user.uid || ""
+                            }
+                            localStorage.setItem("user", JSON.stringify(userData));
                             var database = firebase.database();
                             var database_ref = database.ref();
                             database_ref.child('users/' + userCredential.uid + '/last_login').set(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date()));
@@ -112,11 +120,12 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                                 role: "new",
                                 phone: "",
                                 proPicUrl: "",
-                                name: "",
+                                name: this.setUserNameVal(userCredential.email),
                                 title: "",
                                 last_login: ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date()),
                                 last_logout: "",
-                                darkTheme: false
+                                darkTheme: false,
+                                uid: userCredential.uid
                             }
                             database_ref.child('users/' + userCredential.uid).set(user_data);
                             this.emailAddress("");
@@ -136,6 +145,30 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                     rvm.hideLoader();
                     return false;
                 }
+            };
+
+            this.setUserNameVal = (email) => {
+                var userName = "";
+                var fullName = email.split('@')[0].split('.');
+                var firstName = fullName[0];
+                var lastName = fullName[fullName.length - 1];
+                if (firstName === lastName) {
+                    userName = firstName;
+                } else {
+                    userName = firstName + " " + lastName;
+                }
+                firebase.auth()
+                    .currentUser
+                    .updateProfile({
+                        displayName: userName
+                    })
+                    .catch((error) => {
+                        var errorCode = error.code;
+                        var errorMessage = error.message;
+                        rvm.hideLoader();
+                        rvm.messagesInfo(rvm.getMessagesData("error", errorCode.split("/")[1], errorMessage));
+                    });
+                return userName;
             };
 
 

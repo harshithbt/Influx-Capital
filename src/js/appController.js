@@ -89,6 +89,15 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       this.messagesDataprovider = new ArrayDataProvider(this.messagesInfo);
       // Initialize Firebase
       const firebaseapp = firebase.initializeApp(fConfig.firebaseConfig);
+      // const authOptions = {
+      //   persistence: [
+      //     firebase.auth.persistence.indexedDBLocalPersistence,
+      //     firebase.browserLocalPersistence,
+      //     firebase.browserSessionPersistence
+      //   ]
+      // };
+      // console.log(authOptions);
+      // const auth = firebase.initializeAuth(firebaseapp, authOptions);
       announcementHandler = (event) => {
         this.message(event.detail.message);
         this.manner(event.detail.manner);
@@ -433,21 +442,21 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         var database_ref = database.ref();
         if (event.type === "keydown") {
           var typeData = {
-            [this.uid()] : "Typing...",
-            [this.friendUID()] : ""
+            [this.uid()]: "Typing...",
+            [this.friendUID()]: ""
           }
           dbRef.set(typeData);
         } else if (event.type === "valueChanged" && event.detail.updatedFrom === "internal") {
           var typeData = {
-            [this.uid()] : "",
-            [this.friendUID()] : ""
+            [this.uid()]: "",
+            [this.friendUID()]: ""
           }
           dbRef.set(typeData);
         }
       }
 
       this.friendTyping = () => {
-        const dbRef = firebase.database().ref().child('mevent/' + this.selectedMessageId()+'/'+this.friendUID());
+        const dbRef = firebase.database().ref().child('mevent/' + this.selectedMessageId() + '/' + this.friendUID());
         dbRef.on("value", (snapshot) => {
           if (snapshot.exists()) {
             var resp = snapshot.val();
