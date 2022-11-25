@@ -9,10 +9,11 @@
  * Your about ViewModel code goes here
  */
 define(["knockout", "../accUtils"],
- function(ko, accUtils) {
+  function (ko, accUtils) {
     function AboutViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));
       this.smScreen = rvm.smScreen;
+      this.userRole = rvm.userRole;
       // Below are a set of the ViewModel methods invoked by the oj-module component.
       // Please reference the oj-module jsDoc for additional information.
 
@@ -30,8 +31,8 @@ define(["knockout", "../accUtils"],
         rvm.headerFooterCond("");
         rvm.hideLoader();
         if (!rvm.isLogin() && !rvm.getUID()) {
-          params.router.go({path: 'login'});
-      }
+          params.router.go({ path: 'login' });
+        }
         // Implement further logic if needed
       };
 

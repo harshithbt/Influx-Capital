@@ -18,6 +18,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       this.KnockoutTemplateUtils = KnockoutTemplateUtils;
 
       // Handle announcements sent when pages change, for Accessibility.
+      this.ROUTER_PARAM_NAME = "icr";
       this.manner = ko.observable('polite');
       this.message = ko.observable();
       this.sessionId = ko.observable(cookie.getUserCookieArray()[1] || "");
@@ -120,7 +121,8 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         { path: 'login', detail: { label: 'Login' } },
         { path: 'preference', detail: { label: 'Preference' } },
         { path: 'admin', detail: { label: 'Admin' } },
-        { path: 'org', detail: { label: 'Organization' } }
+        { path: 'org', detail: { label: 'Organization' } },
+        { path: 'signup', detail: { label: 'SignUp' } }
       ];
 
       let navData = [
@@ -209,7 +211,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       };
 
       this.headerFooterCond = (page) => {
-        if (page === "login") {
+        if (page === "login" || page === "signup") {
           document.getElementById("mainHeader").style.display = "none";
           document.getElementById("mainFooter").style.display = "none";
           document.getElementById("icSideIcons").style.display = "none";
@@ -334,6 +336,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         dbRef.on("value", (snapshot) => {
           if (snapshot.exists()) {
             var messages = [];
+            var msg = "";
             var resp = snapshot.val();
             var result = Object.keys(resp).map((key) => [key, resp[key]]);
             result.forEach((user) => {
@@ -344,11 +347,26 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
                 messageType: user[1].messageType,
                 time: user[1].time
               });
+              // if (resp.uid === this.uid()) {
+                // msg += "<li class='right'>" + resp.uid + " : " + resp.message + "</li>";
+                // msg += "<div class='oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end oj-sm-margin-2x-bottom right'>" +
+                // "<div class='oj-flex-item oj-sm-padding-2x-horizontal message-my-bck'><div class='msg-text'>" + resp.message + "</div>" +
+                // "<div class='oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end msg-time'><div class='oj-flex-item'>" + this.messageTimeFormater(resp.time) + "</div>" +
+                // "</div></div></div>";
+              // } else {
+              //   msg += "<li class='left'>" + resp.uid + " : " + resp.message + "</li>";
+                // msg += "<div><div class='oj-flex oj-sm-flex-items-initial oj-sm-margin-2x-bottom left'>" +
+                // "<div class='oj-flex-item oj-sm-padding-2x-horizontal message-friend-bck'><div class='msg-text'>" + resp.message + "</div>" +
+                // "<div class='oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end msg-time'><div class='oj-flex-item'>" + this.messageTimeFormater(resp.time) + "</div>" +
+                // "</div></div></div>";
+              // }
             });
             this.usersMessagesArray(messages);
             this.messageArrayDataProvider(new ArrayDataProvider(this.usersMessagesArray(), { keyAttributes: "ID" }));
             this.userMessageSelected(friend);
-            this.scrollPos({ y: 20000 });
+            
+            // document.getElementById("messade-page").innerHTML += msg;
+            // $('#listviewMessage')[0].scrollTop = $('#listviewMessage')[0].scrollHeight;
           } else {
             this.userMessageSelected(friend);
           }
@@ -521,6 +539,20 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         { name: "YouTube", id: "youtube", class: "oj-ux-ico-youtube", linkTarget: "https://www.youtube.com/channel/UCFgwsdEXI5MlkT2Pwo6kc4Q" },
       ];
 
+      this.getDetails = () => {
+        var uid = cookie.getUserCookieArray()[5] || "";
+        var ddUserRole = firebase.database().ref("users/" + uid);
+        ddUserRole.on("value", (snapshot) => {
+          if (snapshot.exists()) {
+            var resp = snapshot.val();
+            this.userImage(resp.proPicUrl);
+            this.userRole(resp.role);
+            this.phoneNumber(resp.phone);
+            this.isContrastBackground(resp.darkTheme);
+          }
+        });
+      };
+
 
       this.init = () => {
         if (this.uid() && this.isLogin() && this.getUID()) {
@@ -541,6 +573,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         }
       };
       this.init();
+      
     }
     // release the application bootstrap busy state
     Context.getPageContext().getBusyContext().applicationBootstrapComplete();

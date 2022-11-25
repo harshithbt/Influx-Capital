@@ -1,0 +1,119 @@
+<!--
+ Copyright (c) 2014, 2022, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div class="login-main oj-sm-padding-8x-top">
+    <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
+        <span role="img" class="demo-ic-iconbig" title="IC Logo" alt="IC Logo"></span>
+    </div>
+    <div class="oj-hybrid-padding oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
+        <h1 class="oj-typography-subheading-sm">Welcome to Influx Capital</h1>
+    </div>
+    <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
+        <div>
+            <oj-train id="signuptrain" class="oj-train-stretch oj-sm-margin-4x-horizontal"
+                on-selected-step-changed="[[updateLabelText]]" on-oj-before-select="[[validateTrain]]"
+                selected-step="{{selectedStepValue}}" steps="[[stepArray]]">
+            </oj-train>
+
+            <oj-validation-group id="tracker" role="group">
+                <oj-bind-if test="[[selectedStepValue() === 'stp1'|| selectedStepValue() === 'stp3']]">
+                    <oj-form-layout id="fl2" readonly="[[isFormReadonly()]]">
+                        <oj-input-text label-hint="[[isFormReadonly() ? 'Email' : 'Enter your email']]"
+                            value="{{emailAddress}}" validators="[[emailPatternValidator]]" required>
+                        </oj-input-text>
+                        <oj-input-password id="singupPassword"
+                            label-hint="[[isFormReadonly() ? 'Password' : 'Create a password']]" value="{{password}}"
+                            on-keyup="[[keyupHandlerPassword]]" mask-icon="visible" required
+                            validators="[[[passValidator]]]">
+                        </oj-input-password>
+                        <oj-bind-if test="[[!isFormReadonly()]]">
+                            <div id="messages">
+                                <div id="instr" class="demo-instruction">Your password must contain at least</div>
+                                <div id="listing" class="demo-rules">
+                                    <div>
+                                        <span class="demo-icon oj-helper-text-align-center icon-bullet"></span>
+                                        1 Uppercase Letter
+                                    </div>
+                                    <div>
+                                        <span class="demo-icon oj-helper-text-align-center icon-bullet"></span>
+                                        1 Number
+                                    </div>
+                                    <div>
+                                        <span class="demo-icon oj-helper-text-align-center icon-bullet"></span>
+                                        1 Special Character
+                                    </div>
+                                    <div>
+                                        <span class="demo-icon oj-helper-text-align-center icon-bullet"></span>
+                                        8 Characters
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div
+                                    class="ic-gauge-cell oj-flex oj-sm-align-items-center oj-sm-justify-content-center">
+                                    <oj-status-meter-gauge min="0" max="100" value="{{progressBarValue}}"
+                                        class="ic-gauge-cell" size="sm" plot-area.rendered="on" color="#759C6C"
+                                        readonly>
+                                    </oj-status-meter-gauge>
+                                </div>
+
+                                <div>
+                                    <oj-bind-text value="[[passwordStrengthDetail]]"></oj-bind-text>
+                                </div>
+                            </div>
+                        </oj-bind-if>
+                    </oj-form-layout>
+                </oj-bind-if>
+                <oj-bind-if test="[[selectedStepValue() === 'stp2'|| selectedStepValue() === 'stp3']]">
+                    <oj-form-layout id="fl1" readonly="[[isFormReadonly()]]">
+                        <oj-input-text label-hint="[[isFormReadonly() ? 'First Name' : 'Enter your First Name']]"
+                            value="{{firstName}}" required>
+                        </oj-input-text>
+                        <oj-input-text label-hint="[[isFormReadonly() ? 'Last Name' : 'Enter your Last Name']]"
+                            value="{{lastName}}" required>
+                        </oj-input-text>
+                        <oj-input-text label-hint="[[isFormReadonly() ? 'Phone Number' : 'Enter your Phone Number']]"
+                            value="{{phoneNumber}}">
+                        </oj-input-text>
+                    </oj-form-layout>
+                </oj-bind-if>
+            </oj-validation-group>
+        </div>
+    </div>
+    <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center oj-sm-flex-direction-row">
+        <oj-bind-if test="[[selectedStepValue() === 'stp2' || selectedStepValue() === 'stp3']]">
+            <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center oj-sm-margin-1x">
+                <oj-button display="icons" chroming="callToAction" on-oj-action="[[previousAc]]" title="Previous">
+                    <span slot="startIcon" class="oj-ux-ico-chevron-left"></span>
+                    Previous
+                </oj-button>
+            </div>
+        </oj-bind-if>
+        <oj-bind-if test="[[selectedStepValue() === 'stp1' || selectedStepValue() === 'stp2']]">
+            <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center oj-sm-margin-1x">
+                <oj-button display="icons" chroming="callToAction" on-oj-action="[[nextAc]]" title="Next">
+                    <span slot="startIcon" class="oj-ux-ico-chevron-right"></span>
+                    Next
+                </oj-button>
+            </div>
+        </oj-bind-if>
+        <oj-bind-if test="[[selectedStepValue() === 'stp3']]">
+            <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center oj-sm-margin-1x">
+                <oj-button id="continueBtn" class="oj-button-lg oj-sm-padding-4x-horizontal"
+                    on-oj-action="[[signUpButton]]" chroming="callToAction" display="icons">SignUp
+                </oj-button>
+            </div>
+        </oj-bind-if>
+    </div>
+    <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center oj-sm-margin-2x">
+        <a on-click="[[loginNavigateAc]]">
+            Go to Login?
+        </a>
+    </div>
+</div>
+
+<div id="dialogWrapper">
+
+</div>

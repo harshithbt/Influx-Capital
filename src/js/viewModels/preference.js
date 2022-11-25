@@ -8,7 +8,7 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils", "../firebasejs/cookie", "ojs/ojarraydataprovider", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojfilepicker", "ojs/ojprogress-bar", "../firebasejs/firebase-app", "../firebasejs/firebase-auth", "../firebasejs/firebase-storage"],
+define(["knockout", "../accUtils", "../firebasejs/cookie", "ojs/ojarraydataprovider", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojfilepicker", "ojs/ojprogress-bar"],
   function (ko, accUtils, cookie, ArrayDataProvider) {
     function PreferenceViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));

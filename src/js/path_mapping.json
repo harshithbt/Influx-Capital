@@ -379,6 +379,81 @@
         "pathSuffix": "/min/ojcss'",
         "cdnPath": "ojcss"
       }
+    },
+
+    "firebase/app": {
+      "cdn": "3rdparty",
+      "cwd": "node_modules/firebase",
+      "debug": {
+        "src":  ["firebase-app-compat.js", "firebase-app-compat.js.map"],
+        "path": "libs/firebase/firebase-app-compat.js",
+        "cdnPath": "firebase/firebase-app-compat"
+      },
+      "release": {
+        "src":  ["firebase-app-compat.js", "firebase-app-compat.js.map"],
+        "path": "libs/firebase/firebase-app-compat.js",
+        "cdnPath": "firebase/firebase-app-compat"
+      }
+    },
+
+    "firebase/auth": {
+      "cdn": "3rdparty",
+      "cwd": "node_modules/firebase",
+      "debug": {
+        "src":  ["firebase-auth-compat.js", "firebase-auth-compat.js.map"],
+        "path": "libs/firebase/firebase-auth-compat.js",
+        "cdnPath": "firebase/firebase-auth-compat"
+      },
+      "release": {
+        "src":  ["firebase-auth-compat.js", "firebase-auth-compat.js.map"],
+        "path": "libs/firebase/firebase-auth-compat.js",
+        "cdnPath": "firebase/firebase-auth-compat"
+      }
+    },
+
+    "firebase/database": {
+      "cdn": "3rdparty",
+      "cwd": "node_modules/firebase",
+      "debug": {
+        "src":  ["firebase-database-compat.js", "firebase-database-compat.js.map"],
+        "path": "libs/firebase/firebase-database-compat.js",
+        "cdnPath": "firebase/firebase-database-compat"
+      },
+      "release": {
+        "src":  ["firebase-database-compat.js", "firebase-database-compat.js.map"],
+        "path": "libs/firebase/firebase-database-compat.js",
+        "cdnPath": "firebase/firebase-database-compat"
+      }
+    },
+
+    "firebase/storage": {
+      "cdn": "3rdparty",
+      "cwd": "node_modules/firebase",
+      "debug": {
+        "src":  ["firebase-storage-compat.js", "firebase-storage-compat.js.map"],
+        "path": "libs/firebase/firebase-storage-compat.js",
+        "cdnPath": "firebase/firebase-storage-compat"
+      },
+      "release": {
+        "src":  ["firebase-storage-compat.js", "firebase-storage-compat.js.map"],
+        "path": "libs/firebase/firebase-storage-compat.js",
+        "cdnPath": "firebase/firebase-storage-compat"
+      }
+    },
+
+    "firebase/analytics": {
+      "cdn": "3rdparty",
+      "cwd": "node_modules/firebase",
+      "debug": {
+        "src":  ["firebase-analytics-compat.js", "firebase-analytics-compat.js.map"],
+        "path": "libs/firebase/firebase-analytics-compat.js",
+        "cdnPath": "firebase/firebase-analytics-compat"
+      },
+      "release": {
+        "src":  ["firebase-analytics-compat.js", "firebase-analytics-compat.js.map"],
+        "path": "libs/firebase/firebase-analytics-compat.js",
+        "cdnPath": "firebase/firebase-analytics-compat"
+      }
     }
 
   }

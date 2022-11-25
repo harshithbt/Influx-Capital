@@ -8,7 +8,7 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutility", "ojs/ojcorerouter", "ojs/ojarraydataprovider", "ojs/ojconverterutils-i18n", "ojs/ojasyncvalidator-regexp", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojdialog", "../firebasejs/firebase-app", "../firebasejs/firebase-auth", "../firebasejs/firebase-database"],
+define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutility", "ojs/ojcorerouter", "ojs/ojarraydataprovider", "ojs/ojconverterutils-i18n", "ojs/ojasyncvalidator-regexp", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojdialog", "../firebasejs/firebase-auth", "../firebasejs/firebase-database"],
     function (ko, accUtils, cookie, icUtils, CoreRouter, ArrayDataProvider, ojconverterutils_i18n_1, AsyncRegExpValidator) {
         function LoginViewModel(params) {
             const rvm = ko.dataFor(document.getElementById("pageContent"));
@@ -106,69 +106,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
             };
 
             this.signUpButton = () => {
-                const tracker = document.getElementById("trackerLogin");
-                rvm.showLoader();
-                if (tracker.valid === "valid") {
-                    firebase.auth().createUserWithEmailAndPassword(this.emailAddress(), this.password())
-                        .then((userCredential) => {
-
-                            var database = firebase.database();
-                            var database_ref = database.ref()
-                            // Create User data
-                            var user_data = {
-                                email: userCredential.email,
-                                role: "new",
-                                phone: "",
-                                proPicUrl: "",
-                                name: this.setUserNameVal(userCredential.email),
-                                title: "",
-                                last_login: ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date()),
-                                last_logout: "",
-                                darkTheme: false,
-                                uid: userCredential.uid
-                            }
-                            database_ref.child('users/' + userCredential.uid).set(user_data);
-                            this.emailAddress("");
-                            this.password("");
-                            rvm.hideLoader();
-                            rvm.messagesInfo(rvm.getMessagesData("confirmation", "User Created", userCredential.email + " user created successfully\n Please login with same credentials"));
-                        })
-                        .catch((error) => {
-                            var errorCode = error.code;
-                            var errorMessage = error.message;
-                            rvm.hideLoader();
-                            rvm.messagesInfo(rvm.getMessagesData("error", errorCode.split("/")[1], errorMessage));
-                        });
-                } else {
-                    tracker.showMessages();
-                    tracker.focusOn("@firstInvalidShown");
-                    rvm.hideLoader();
-                    return false;
-                }
-            };
-
-            this.setUserNameVal = (email) => {
-                var userName = "";
-                var fullName = email.split('@')[0].split('.');
-                var firstName = fullName[0];
-                var lastName = fullName[fullName.length - 1];
-                if (firstName === lastName) {
-                    userName = firstName;
-                } else {
-                    userName = firstName + " " + lastName;
-                }
-                firebase.auth()
-                    .currentUser
-                    .updateProfile({
-                        displayName: userName
-                    })
-                    .catch((error) => {
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
-                        rvm.hideLoader();
-                        rvm.messagesInfo(rvm.getMessagesData("error", errorCode.split("/")[1], errorMessage));
-                    });
-                return userName;
+                params.router.go({ path: 'signup' });
             };
 
 
@@ -205,6 +143,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                 document.title = "IC | Login";
                 rvm.headerFooterCond("login");
                 rvm.hideLoader();
+                this.emailAddress(params.router._activeState.params.email || "");
                 if (rvm.isLogin() && rvm.getUID()) {
                     params.router.go({ path: 'home' });
                 }

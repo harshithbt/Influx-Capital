@@ -325,3 +325,8 @@ html[dir="rtl"] .demo-oracle-icon {
     visibility: hidden;
   }
 }
+
+.ic-gauge-cell {
+  width: 100%;
+}
+

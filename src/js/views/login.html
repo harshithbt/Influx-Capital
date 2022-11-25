@@ -4,57 +4,68 @@
  as shown at https://oss.oracle.com/licenses/upl/
  -->
 <div class="login-main oj-sm-padding-8x-top">
-    <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
-        <span role="img" class="demo-ic-iconbig" title="IC Logo" alt="IC Logo"></span>
+  <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
+    <span role="img" class="demo-ic-iconbig" title="IC Logo" alt="IC Logo"></span>
+  </div>
+  <div class="oj-hybrid-padding oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
+    <h1 class="oj-typography-subheading-sm">Sign in to Influx Capital</h1>
+  </div>
+  <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
+    <div>
+      <oj-validation-group id="trackerLogin" role="group">
+        <oj-form-layout direction="row" max-columns="1">
+          <oj-input-text label-hint="Email" value="{{emailAddress}}" validators="[[emailPatternValidator]]" required>
+          </oj-input-text>
+          <oj-input-password label-hint="Password" value="{{password}}" mask-icon="visible" required
+            onkeydown="if (event.keyCode == 13) document.getElementById('LoginToggleButton').click()">
+          </oj-input-password>
+          <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
+            <a on-click="[[forgotPasswordOpen]]" class="oj-text-color-warning">
+              Forgot Password?
+            </a>
+          </div>
+        </oj-form-layout>
+      </oj-validation-group>
     </div>
-    <div class="oj-hybrid-padding oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
-        <h1 class="oj-typography-subheading-sm">Login</h1>
-    </div>
-    <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
-        <div>
-            <oj-validation-group id="trackerLogin" role="group">
-                <oj-form-layout direction="row" max-columns="1">
-                    <oj-input-text label-hint="Email" value="{{emailAddress}}" validators="[[emailPatternValidator]]" required></oj-input-text>
-                    <oj-input-password label-hint="Password" value="{{password}}" mask-icon="visible" required onkeydown="if (event.keyCode == 13) document.getElementById('LoginToggleButton').click()"></oj-input-password>
-                </oj-form-layout>
-            </oj-validation-group>
-        </div>
-    </div>
-    <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
-        <oj-button id="LoginToggleButton" class="oj-button-lg oj-sm-padding-4x-horizontal"
-            on-oj-action="[[loginButton]]" chroming="callToAction" display="icons">Login
-        </oj-button>
-        <!-- <oj-button display="icons" chroming="borderless" on-oj-action="[[signInWithGoogle]]">
+  </div>
+  <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
+    <oj-button id="LoginToggleButton" class="oj-button-lg oj-sm-padding-4x-horizontal" on-oj-action="[[loginButton]]"
+      chroming="callToAction" display="icons">Sign in
+    </oj-button>
+    <!-- <oj-button display="icons" chroming="borderless" on-oj-action="[[signInWithGoogle]]">
             <span slot="startIcon" class="oj-ux-ico-google"></span>
             SignIn With Google
         </oj-button> -->
-        <oj-button id="SignUpToggleButton" class="oj-button-lg oj-sm-padding-4x-horizontal"
+    <!-- <oj-button id="SignUpToggleButton" class="oj-button-lg oj-sm-padding-4x-horizontal"
             on-oj-action="[[signUpButton]]" chroming="callToAction" display="icons">SignUp
-        </oj-button>
-    </div>
-    <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center">
-        <a on-click="[[forgotPasswordOpen]]" class="oj-link-standalone oj-link-subtle-secondary">
-            Forgot Password?
-          </a>
-    </div>
+        </oj-button> -->
+  </div>
+
+  <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center oj-sm-margin-4x">
+    <span>New to Influx Capital? </span>
+    <a on-click="[[signUpButton]]">
+      Create an account.
+    </a>
+  </div>
 </div>
 
 <div id="dialogWrapper">
 
-    <oj-dialog id="forgotPassword" dialog-title="Forgot Password?" aria-describedby="desc">
-      <div slot="body">
-        <div class="oj-sm-padding-2x-top" id="foePass-form-container">
-          <oj-validation-group id="trackerFor" role="group">
-            <oj-form-layout direction="row" max-columns="1">
-              <oj-input-text label-hint="Email" value="{{forEmail}}" validators="[[emailPatternValidator]]" required></oj-input-text>
-            </oj-form-layout>
-          </oj-validation-group>
-        </div>
+  <oj-dialog id="forgotPassword" dialog-title="Forgot Password?" aria-describedby="desc">
+    <div slot="body">
+      <div class="oj-sm-padding-2x-top" id="foePass-form-container">
+        <oj-validation-group id="trackerFor" role="group">
+          <oj-form-layout direction="row" max-columns="1">
+            <oj-input-text label-hint="Email" value="{{forEmail}}" validators="[[emailPatternValidator]]" required>
+            </oj-input-text>
+          </oj-form-layout>
+        </oj-validation-group>
       </div>
-      <div slot="footer">
-        <oj-button id="cancelButton" on-oj-action="[[forgotPasswordClose]]">Cancel</oj-button>
-        <oj-button id="forPassBtn" chroming="callToAction" on-oj-action="[[forgotPasswordAC]]">Continue</oj-button>
-      </div>
-    </oj-dialog>
-  
-  </div>
+    </div>
+    <div slot="footer">
+      <oj-button id="cancelButton" on-oj-action="[[forgotPasswordClose]]">Cancel</oj-button>
+      <oj-button id="forPassBtn" chroming="callToAction" on-oj-action="[[forgotPasswordAC]]">Continue</oj-button>
+    </div>
+  </oj-dialog>
+
+</div>
