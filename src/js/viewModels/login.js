@@ -42,7 +42,7 @@ define(["knockout", "../accUtils", "firebase", "../icUtils/cookie", "../icUtils/
                             rvm.userName(disName);
                             rvm.userInitial(ojconverterutils_i18n_1.IntlConverterUtils.getInitials(disName));
                             rvm.isLogin(true);
-                            rvm.uid(userCredential.uid);
+                            rvm.uid(user.uid);
                             // rvm.userImage(user.photoURL || "");
                             rvm.displayName(user.displayName || "");
                             // rvm.phoneNumber(user.phoneNumber || "");
@@ -59,7 +59,7 @@ define(["knockout", "../accUtils", "firebase", "../icUtils/cookie", "../icUtils/
                             localStorage.setItem("user", JSON.stringify(userData));
                             var database = firebase.database();
                             var database_ref = database.ref();
-                            database_ref.child('users/' + userCredential.uid + '/last_login').set(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date()));
+                            database_ref.child('users/' + user.uid + '/last_login').set(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date()));
                             rvm.hideLoader();
                             params.router.go({ path: 'home' });
                         })

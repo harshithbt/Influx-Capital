@@ -1,4 +1,4 @@
-define(['knockout', 'ojs/ojknockout', 'ojs/ojavatar', 'ojs/ojbutton', '../../firebasejs/firebase-database'],
+define(['knockout', 'ojs/ojknockout', 'ojs/ojavatar', 'ojs/ojbutton'],
     function (ko) {
         function model(context) {
             this.initials = null;
