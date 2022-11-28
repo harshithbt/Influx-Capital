@@ -8,8 +8,8 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutility", "ojs/ojcorerouter", "ojs/ojarraydataprovider", "ojs/ojconverterutils-i18n", "ojs/ojasyncvalidator-regexp", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojtrain", "ojs/ojgauge", "../firebasejs/firebase-auth", "../firebasejs/firebase-database"],
-    function (ko, accUtils, cookie, icUtils, CoreRouter, ArrayDataProvider, ojconverterutils_i18n_1, AsyncRegExpValidator) {
+define(["knockout", "firebase", "../accUtils", "../icUtils/cookie", "../icUtils/icutility", "ojs/ojcorerouter", "ojs/ojarraydataprovider", "ojs/ojconverterutils-i18n", "ojs/ojasyncvalidator-regexp", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojtrain", "ojs/ojgauge"],
+    function (ko, firebase, accUtils, cookie, icUtils, CoreRouter, ArrayDataProvider, ojconverterutils_i18n_1, AsyncRegExpValidator) {
         function SignupViewModel(params) {
             const rvm = ko.dataFor(document.getElementById("pageContent"));
             this.emailAddress = ko.observable();
@@ -127,31 +127,31 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                 rvm.showLoader();
                 firebase.auth().createUserWithEmailAndPassword(this.emailAddress(), this.password())
                     .then((userCredential) => {
-
+                        var user = userCredential.user;
                         var database = firebase.database();
                         var database_ref = database.ref()
                         // Create User data
                         var user_data = {
-                            email: userCredential.email,
+                            email: user.email,
                             role: "new",
                             phone: this.phoneNumber() || "",
                             proPicUrl: "",
                             name: this.setUserNameVal(this.firstName(), this.lastName()),
                             title: "",
-                            last_login: ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIso(new Date()),
+                            last_login: "",
                             last_logout: "",
                             darkTheme: false,
-                            uid: userCredential.uid
+                            uid: user.uid
                         }
-                        database_ref.child('users/' + userCredential.uid).set(user_data);
+                        database_ref.child('users/' + user.uid).set(user_data);
                         this.emailAddress("");
                         this.password("");
                         this.firstName("");
                         this.lastName("");
                         this.phoneNumber("");
                         rvm.hideLoader();
-                        rvm.messagesInfo(rvm.getMessagesData("confirmation", "User Created", userCredential.email + " user created successfully\n Please login with same credentials"));
-                        params.router.go({ path: 'login', params: { email: userCredential.email } });
+                        rvm.messagesInfo(rvm.getMessagesData("confirmation", "User Created", user.email + " user created successfully\n Please login with same credentials"));
+                        params.router.go({ path: 'login', params: { email: user.email } });
                     })
                     .catch((error) => {
                         var errorCode = error.code;

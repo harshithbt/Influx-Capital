@@ -8,8 +8,8 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutility", "ojs/ojcorerouter", "ojs/ojarraydataprovider", "ojs/ojconverterutils-i18n", "ojs/ojasyncvalidator-regexp", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojdialog", "../firebasejs/firebase-auth", "../firebasejs/firebase-database"],
-    function (ko, accUtils, cookie, icUtils, CoreRouter, ArrayDataProvider, ojconverterutils_i18n_1, AsyncRegExpValidator) {
+define(["knockout", "../accUtils", "firebase", "../icUtils/cookie", "../icUtils/icutility", "ojs/ojcorerouter", "ojs/ojarraydataprovider", "ojs/ojconverterutils-i18n", "ojs/ojasyncvalidator-regexp", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojdialog"],
+    function (ko, accUtils, firebase, cookie, icUtils, CoreRouter, ArrayDataProvider, ojconverterutils_i18n_1, AsyncRegExpValidator) {
         function LoginViewModel(params) {
             const rvm = ko.dataFor(document.getElementById("pageContent"));
             this.emailAddress = ko.observable();
@@ -34,7 +34,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                     firebase.auth().signInWithEmailAndPassword(this.emailAddress(), this.password())
                         .then((userCredential) => {
                             var disName = this.emailAddress().split("@")[0];
-                            var user = userCredential;
+                            var user = userCredential.user;
                             if (user.displayName) {
                                 disName = user.displayName.replace(/\s/g, '');
                             }
@@ -48,7 +48,7 @@ define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/icutil
                             // rvm.phoneNumber(user.phoneNumber || "");
                             this.emailAddress("");
                             this.password("");
-                            cookie.createUserCookie(user.email, disName, icUtils.generateRandomString(), ojconverterutils_i18n_1.IntlConverterUtils.getInitials(disName), userCredential.uid);
+                            cookie.createUserCookie(user.email, disName, icUtils.generateRandomString(), ojconverterutils_i18n_1.IntlConverterUtils.getInitials(disName), user.uid);
                             const userData = {
                                 userName: user.displayName || "",
                                 profile_picture: user.photoURL || "",

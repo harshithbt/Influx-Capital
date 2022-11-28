@@ -8,13 +8,14 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils", "../components/demo-card/loader"],
-    function (ko, accUtils) {
+define(["knockout", "firebase", "../accUtils", "../icUtils/cookie", "../components/demo-card/loader"],
+    function (ko, firebase, accUtils, cookie) {
         function OrgViewModel(params) {
             const rvm = ko.dataFor(document.getElementById("pageContent"));
             this.smScreen = rvm.smScreen;
             this.baseUserArray = ko.observableArray();
             this.userArray = ko.observableArray();
+            
 
 
             this.refreshUser = () => {
@@ -42,7 +43,9 @@ define(["knockout", "../accUtils", "../components/demo-card/loader"],
                         email: user[1].email,
                         title: user[1].title,
                         work: user[1].phone,
-                        avatar: user[1].proPicUrl
+                        avatar: user[1].proPicUrl,
+                        friend: user[0] === cookie.getUserCookieArray()[5] ? false : true,
+                        uid: user[0]
                     });
                 });
                 return userArray;

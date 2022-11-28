@@ -49,7 +49,13 @@
         'preact/jsx-runtime': 'libs/preact/jsx-runtime/dist/jsxRuntime.umd',
         'proj4': 'libs/proj4js/dist/proj4-src',
         'touchr': 'libs/touchr/touchr',
-        'chai': 'libs/chai/chai-4.3.6'
+        'chai': 'libs/chai/chai-4.3.6',
+        'firebase': 'libs/firebase/firebase-compat',
+        'firebase/auth': 'libs/firebase/firebase-auth-compat',
+        'firebase/database': 'libs/firebase/firebase-database-compat',
+        'firebase/storage': 'libs/firebase/firebase-storage-compat',
+        'firebase/analytics': 'libs/firebase/firebase-analytics-compat',
+        'moment': 'libs/moment/moment'
       }
       // endinjector
     }

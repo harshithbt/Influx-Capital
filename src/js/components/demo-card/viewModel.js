@@ -1,9 +1,11 @@
-define(['ojs/ojknockout', 'ojs/ojavatar'],
-    function () {
+define(['knockout', 'ojs/ojknockout', 'ojs/ojavatar', 'ojs/ojbutton', '../../firebasejs/firebase-database'],
+    function (ko) {
         function model(context) {
             this.initials = null;
             this.workFormatted = null;
             var element = context.element;
+            const rvm = ko.dataFor(document.getElementById("pageContent"));
+            this.uid = rvm.uid;
 
             /**
              * Formats a 10 digit number as a phone number.

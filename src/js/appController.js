@@ -8,9 +8,9 @@
 /*
  * Your application specific code will go here
  */
-define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/firebase-config', 'firebasejs/moment', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojfilepickerutils", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "ojs/ojfilepicker", "ojs/ojswitch", "firebasejs/firebase-app", "firebasejs/firebase-auth", "firebasejs/firebase-database",
+define(['knockout', 'jquery', 'firebase', 'ojs/ojcontext', 'icUtils/cookie', 'icUtils/firebase-config', 'moment', 'emoji', 'ojs/ojmodule-element-utils', 'ojs/ojknockouttemplateutils', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojknockoutrouteradapter', 'ojs/ojurlparamadapter', 'ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'ojs/ojarraydataprovider', "ojs/ojknockout-keyset", "ojs/ojconverterutils-i18n", "ojs/ojfilepickerutils", "ojs/ojmessages", "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojdialog", "ojs/ojlistview", "ojs/ojlistitemlayout", "ojs/ojavatar", "ojs/ojpopup", "ojs/ojfilepicker", "ojs/ojswitch",
   'ojs/ojdrawerpopup', 'ojs/ojmodule-element', 'ojs/ojknockout'],
-  function (ko, $, Context, cookie, fConfig, moment, emoji, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1, FilePickerUtils) {
+  function (ko, $, firebase, Context, cookie, fConfig, moment, emoji, moduleUtils, KnockoutTemplateUtils, CoreRouter, ModuleRouterAdapter, KnockoutRouterAdapter, UrlParamAdapter, ResponsiveUtils, ResponsiveKnockoutUtils, ArrayDataProvider, ojknockout_keyset_1, ojconverterutils_i18n_1, FilePickerUtils) {
 
     function ControllerViewModel(params) {
 
@@ -59,6 +59,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       this.selectedMessageId = ko.observable();
       this.friendTypingValue = ko.observable();
 
+
       this.isContrastBackground.subscribe(function (newValue) {
         let darkContainer = document.getElementById("ic-main-container");
         if (darkContainer != null) {
@@ -89,16 +90,8 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
       this.messagesInfo = ko.observableArray();
       this.messagesDataprovider = new ArrayDataProvider(this.messagesInfo);
       // Initialize Firebase
-      const firebaseapp = firebase.initializeApp(fConfig.firebaseConfig);
-      // const authOptions = {
-      //   persistence: [
-      //     firebase.auth.persistence.indexedDBLocalPersistence,
-      //     firebase.browserLocalPersistence,
-      //     firebase.browserSessionPersistence
-      //   ]
-      // };
-      // console.log(authOptions);
-      // const auth = firebase.initializeAuth(firebaseapp, authOptions);
+      const app = firebase.initializeApp(fConfig.firebaseConfig);
+      // const analytics = firebase.getAnalytics(app);
       announcementHandler = (event) => {
         this.message(event.detail.message);
         this.manner(event.detail.manner);
@@ -348,23 +341,23 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
                 time: user[1].time
               });
               // if (resp.uid === this.uid()) {
-                // msg += "<li class='right'>" + resp.uid + " : " + resp.message + "</li>";
-                // msg += "<div class='oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end oj-sm-margin-2x-bottom right'>" +
-                // "<div class='oj-flex-item oj-sm-padding-2x-horizontal message-my-bck'><div class='msg-text'>" + resp.message + "</div>" +
-                // "<div class='oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end msg-time'><div class='oj-flex-item'>" + this.messageTimeFormater(resp.time) + "</div>" +
-                // "</div></div></div>";
+              // msg += "<li class='right'>" + resp.uid + " : " + resp.message + "</li>";
+              // msg += "<div class='oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end oj-sm-margin-2x-bottom right'>" +
+              // "<div class='oj-flex-item oj-sm-padding-2x-horizontal message-my-bck'><div class='msg-text'>" + resp.message + "</div>" +
+              // "<div class='oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end msg-time'><div class='oj-flex-item'>" + this.messageTimeFormater(resp.time) + "</div>" +
+              // "</div></div></div>";
               // } else {
               //   msg += "<li class='left'>" + resp.uid + " : " + resp.message + "</li>";
-                // msg += "<div><div class='oj-flex oj-sm-flex-items-initial oj-sm-margin-2x-bottom left'>" +
-                // "<div class='oj-flex-item oj-sm-padding-2x-horizontal message-friend-bck'><div class='msg-text'>" + resp.message + "</div>" +
-                // "<div class='oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end msg-time'><div class='oj-flex-item'>" + this.messageTimeFormater(resp.time) + "</div>" +
-                // "</div></div></div>";
+              // msg += "<div><div class='oj-flex oj-sm-flex-items-initial oj-sm-margin-2x-bottom left'>" +
+              // "<div class='oj-flex-item oj-sm-padding-2x-horizontal message-friend-bck'><div class='msg-text'>" + resp.message + "</div>" +
+              // "<div class='oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-end msg-time'><div class='oj-flex-item'>" + this.messageTimeFormater(resp.time) + "</div>" +
+              // "</div></div></div>";
               // }
             });
             this.usersMessagesArray(messages);
             this.messageArrayDataProvider(new ArrayDataProvider(this.usersMessagesArray(), { keyAttributes: "ID" }));
             this.userMessageSelected(friend);
-            
+
             // document.getElementById("messade-page").innerHTML += msg;
             // $('#listviewMessage')[0].scrollTop = $('#listviewMessage')[0].scrollHeight;
           } else {
@@ -573,7 +566,7 @@ define(['knockout', 'jquery', 'ojs/ojcontext', 'firebasejs/cookie', 'firebasejs/
         }
       };
       this.init();
-      
+
     }
     // release the application bootstrap busy state
     Context.getPageContext().getBusyContext().applicationBootstrapComplete();

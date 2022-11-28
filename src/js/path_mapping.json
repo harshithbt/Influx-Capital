@@ -381,6 +381,36 @@
       }
     },
 
+    "moment": {
+      "cdn": "3rdparty",
+      "cwd": "node_modules/moment",
+      "debug": {
+        "src":  ["moment.js"],
+        "path": "libs/moment/moment.js",
+        "cdnPath": "moment/moment"
+      },
+      "release": {
+        "src":  ["moment.js"],
+        "path": "libs/moment/moment.js",
+        "cdnPath": "moment/moment"
+      }
+    },
+
+    "firebase": {
+      "cdn": "3rdparty",
+      "cwd": "node_modules/firebase",
+      "debug": {
+        "src":  ["firebase-compat.js", "firebase-compat.js.map"],
+        "path": "libs/firebase/firebase-compat.js",
+        "cdnPath": "firebase/firebase-compat"
+      },
+      "release": {
+        "src":  ["firebase-compat.js", "firebase-compat.js.map"],
+        "path": "libs/firebase/firebase-compat.js",
+        "cdnPath": "firebase/firebase-compat"
+      }
+    },
+
     "firebase/app": {
       "cdn": "3rdparty",
       "cwd": "node_modules/firebase",

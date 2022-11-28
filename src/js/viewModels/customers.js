@@ -8,9 +8,9 @@
 /*
  * Your dashboard ViewModel code goes here
  */
-define(["../accUtils", "../services", "../firebasejs/icutility", "require", "exports", "knockout", "ojs/ojbootstrap", "ojs/ojarraydataprovider", "ojs/ojlistdataproviderview", "ojs/ojdataprovider", "ojs/ojconverterutils-i18n",
-  "ojs/ojknockout", "ojs/ojtable", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojformlayout", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojselectcombobox", "../firebasejs/firebase-app", "../firebasejs/firebase-auth", "../firebasejs/firebase-database"],
-  function (accUtils, services, icutility,  require, exports, ko, ojbootstrap_1, ArrayDataProvider, ListDataProviderView, ojdataprovider_1, ojconverterutils_i18n_1) {
+define(["../accUtils", "firebase", "../icUtils/icutility", "require", "exports", "knockout", "ojs/ojbootstrap", "ojs/ojarraydataprovider", "ojs/ojlistdataproviderview", "ojs/ojdataprovider", "ojs/ojconverterutils-i18n",
+  "ojs/ojknockout", "ojs/ojtable", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojformlayout", "ojs/ojvalidationgroup", "ojs/ojmessages", "ojs/ojselectcombobox"],
+  function (accUtils, firebase, icutility,  require, exports, ko, ojbootstrap_1, ArrayDataProvider, ListDataProviderView, ojdataprovider_1, ojconverterutils_i18n_1) {
     function CustomerViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));
       this.baseCustArray = ko.observable();

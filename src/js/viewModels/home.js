@@ -8,8 +8,8 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils", "../firebasejs/cookie", "../firebasejs/firebase-auth"],
-  function (ko, accUtils, cookie) {
+define(["knockout", "../accUtils", "../icUtils/cookie", "firebase"],
+  function (ko, accUtils, cookie, firebase) {
     function HomeViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));
       this.smScreen = rvm.smScreen;

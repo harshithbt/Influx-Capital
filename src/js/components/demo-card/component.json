@@ -29,6 +29,16 @@
             "description": "The employee's email.",
             "displayName": "Email",
             "type": "string"
+        },
+        "friend": {
+            "description": "The user is friend or not",
+            "displayName": "Friend",
+            "type": "boolean"
+        },
+        "uid": {
+            "description": "Uid of user",
+            "displayName": "Uid",
+            "type": "string"
         }
     }
 }

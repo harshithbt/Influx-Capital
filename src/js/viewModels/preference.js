@@ -8,8 +8,8 @@
 /*
  * Your about ViewModel code goes here
  */
-define(["knockout", "../accUtils", "../firebasejs/cookie", "ojs/ojarraydataprovider", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojfilepicker", "ojs/ojprogress-bar"],
-  function (ko, accUtils, cookie, ArrayDataProvider) {
+define(["knockout", "firebase", "../accUtils", "../icUtils/cookie", "ojs/ojarraydataprovider", "ojs/ojavatar", "ojs/ojformlayout", "ojs/ojinputtext", "ojs/ojbutton", "ojs/ojdialog", "ojs/ojfilepicker", "ojs/ojprogress-bar"],
+  function (ko, firebase, accUtils, cookie, ArrayDataProvider) {
     function PreferenceViewModel(params) {
       const rvm = ko.dataFor(document.getElementById("pageContent"));
       this.emailAddress = rvm.userEmail;
